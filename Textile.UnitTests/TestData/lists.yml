@@ -1,0 +1,98 @@
+--- # Bret Pettichord, Thanks. (changed from RedCloth. don't have exactly the same way to handle lists)
+in: |-
+  * a simple
+  * bulleted
+  * list!
+out: |-
+  <ul>
+	<li>a simple</li>
+	<li>bulleted</li>
+	<li>list!</li>
+  </ul>
+---
+in: |-
+  # a simple
+  # numbered
+  # list!
+out: |-
+  <ol>
+	<li>a simple</li>
+	<li>numbered</li>
+	<li>list!</li>
+  </ol>
+---
+in: |-
+  * first line
+  * second
+  line
+  * third line
+out: |-
+  <ul>
+  	<li>first line</li>
+  		<li>second<br />
+  		line</li>
+  		<li>third line</li>
+  	</ul>
+---
+in: |-
+  p. start
+
+  * one and one
+  * two and two
+  * three
+
+  p. end
+out: |-
+  <p>start</p>
+  	<ul>
+  	<li>one and one</li>
+  		<li>two and two</li>
+  		<li>three</li>
+  	</ul>
+  
+  	<p>end</p>
+---
+in: |-
+  Funky:
+
+  * Testing
+  ## number
+  **** bullet
+  ## number
+  ## number yeah
+  number
+  ** bullet
+  *** okay
+  #### what
+
+
+out: |-
+  <p>Funky:</p>
+
+	<ul>
+	<li>Testing<ol>
+		<li>number<ul>
+			<li>bullet</li>
+			</ul>
+		</li>
+		<li>number</li>
+		<li>number yeah<br />
+		number</li>
+	</ol>
+	<ul>
+	<li>bullet<ul>
+		<li>okay<ol>
+			<li>what</li>
+			</ol>
+		</li>
+	</ul>
+	</li>
+	</ul>
+	</li>
+	</ul>
+---
+in: '* command run: @time ruby run-tests.rb > toto@'
+out: |-
+  <ul>
+	<li>command run: <code>time ruby run-tests.rb &gt; toto</code></li>
+  </ul>

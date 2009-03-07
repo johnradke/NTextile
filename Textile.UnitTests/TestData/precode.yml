@@ -1,0 +1,3 @@
+---
+in: 'bc. A *simple* example for <b>bold</b> stuff.'
+out: '<pre><code>A *simple* example for &lt;b&gt;bold&lt;/b&gt; stuff.</code></pre>'
