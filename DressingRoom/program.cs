@@ -10,10 +10,14 @@ namespace DressingRoom
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
-			Application.Run(new DressingRoom());
+			string pathToOpen = args.Length > 0 ? args[0] : String.Empty;
+			DressingRoom form = new DressingRoom();
+			form.Show();
+			form.DoOpen(pathToOpen);
+			Application.Run(form);
 		}
 	}
 }

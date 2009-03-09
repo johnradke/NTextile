@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Textile;
 #endregion
 
 
@@ -27,36 +28,90 @@ namespace DressingRoom
 	public partial class DressingRoom : Form
 	{
 		Textile.TextileFormatter m_textileFormatter = null;
-		TempHTMLFileOutputter m_outputter = null;
+		StringBuilderTextileFormatter m_textileOutput = null;
 		string m_currentTextFile = null;
+		HtmlElement m_bodyElement = null;
+		string m_cachedHtml = null;
 
 		public DressingRoom()
 		{
 			InitializeComponent();
 
-			m_outputter = new TempHTMLFileOutputter();
-			m_textileFormatter = new Textile.TextileFormatter(m_outputter);
-			
+			m_textileOutput = new StringBuilderTextileFormatter();
+			m_textileFormatter = new Textile.TextileFormatter(m_textileOutput);
+
 			System.Reflection.Assembly thisExe = System.Reflection.Assembly.GetExecutingAssembly();
-			using(Stream css = thisExe.GetManifestResourceStream("DressingRoom.Default.css"))
-			using (StreamReader rdr = new StreamReader(css))
+			string styleContent;
+			using (Stream css = thisExe.GetManifestResourceStream("DressingRoom.Default.css"))
 			{
-				m_outputter.CssStyles = rdr.ReadToEnd();
-				rdr.Close();
+				using (StreamReader rdr = new StreamReader(css))
+				{
+					styleContent = rdr.ReadToEnd();
+				}
 			}
+
+			// TODO: it may eventually be useful to allow users to specify their own stylesheet/CSS
+			m_webBrowser.DocumentText = String.Format(@"<html>
+	<head>
+		<style>
+			{0}
+		</style>
+	</head>
+	<body id='body'>
+	</body>
+</html>", styleContent);
+
+			// disable links, since we operate on the assumption we can simply substitute the contents of <body>
+			m_webBrowser.AllowNavigation = false;
+			UpdateWindowTitle();
+		}
+
+		public DressingRoom(string path)
+			: this()
+		{
+			DoOpen(path);
 		}
 
 		private void OnBtnFormatClick(object sender, EventArgs e)
 		{
+			DoTextileToHtml();
+		}
+
+		private void DoTextileToHtml()
+		{
 			m_textileFormatter.Format(m_textInput.Text);
-			m_webBrowser.Url = new Uri(m_outputter.OutputPath);
-			m_webBrowser.Refresh();
-			m_statusLabel.Text = "Textile formatted to HTML page: " + m_outputter.OutputPath;
+			m_cachedHtml = m_textileOutput.GetFormattedText();
+			if (m_bodyElement == null)
+			{
+				m_bodyElement = m_webBrowser.Document.GetElementById("body");
+				if (m_bodyElement == null)
+				{
+					// the browser was not ready for us yet
+					m_webBrowser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(m_webBrowser_DocumentCompleted);
+				}
+				else
+				{
+					m_bodyElement.InnerHtml = m_cachedHtml;
+				}
+			}
+			else
+			{
+				m_bodyElement.InnerHtml = m_cachedHtml;
+			}
+		}
+
+		void m_webBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			m_bodyElement = m_webBrowser.Document.GetElementById("body");
+			m_bodyElement.InnerHtml = m_cachedHtml;
 		}
 
 		private void OnFileNewClick(object sender, EventArgs e)
 		{
 			m_textInput.Text = string.Empty;
+			DoTextileToHtml();
+			m_textInput.Modified = false;
+			UpdateWindowTitle();
 		}
 
 		private void OnFileOpenClick(object sender, EventArgs e)
@@ -64,34 +119,79 @@ namespace DressingRoom
 			OpenFileDialog dlg = new OpenFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				StreamReader rdr = new StreamReader(dlg.OpenFile());
-				m_textInput.Text = rdr.ReadToEnd();
-				rdr.Close();
+				DoOpen(dlg.FileName);
+			}
+		}
+
+		public void DoOpen(string path)
+		{
+			if (!String.IsNullOrEmpty(path))
+			{
+				m_currentTextFile = path;
+				using (StreamReader rdr = File.OpenText(m_currentTextFile))
+				{
+					m_textInput.Text = rdr.ReadToEnd();
+				}
+				DoTextileToHtml();
+				m_textInput.Modified = false;
+				UpdateWindowTitle();
 			}
 		}
 
 		private void OnFileSaveClick(object sender, EventArgs e)
 		{
-			if (m_currentTextFile != null && m_currentTextFile != string.Empty)
+			if (!String.IsNullOrEmpty(m_currentTextFile))
 			{
-				StreamWriter wtr = new StreamWriter(m_currentTextFile);
-				wtr.Write(m_textInput.Text);
-				wtr.Close();
+				DoSave(m_currentTextFile);
 			}
 			else
 			{
-				OnFileSaveAsClick(sender, e);
+				DoSaveAs();
 			}
+		}
+
+		private void UpdateWindowTitle()
+		{
+			string fileName = FormatPathNicely(m_currentTextFile);
+			char modified = m_textInput.Modified ? '*' : '-';
+			this.Text = String.Format("{0} {1} The Dressing Room - A Textile Test Tool", fileName, modified);
+		}
+
+		internal static string FormatPathNicely(string path)
+		{
+			if (String.IsNullOrEmpty(path))
+			{
+				return "(Untitled)";
+			}
+			string filename = Path.GetFileName(path);
+			string folderName = Path.GetDirectoryName(path);
+			string result = String.Format("{0} in {1}", filename, folderName);
+			return result;
+		}
+
+		private void DoSave(string path)
+		{
+			m_currentTextFile = path;
+			DoTextileToHtml();
+			using (StreamWriter wtr = new StreamWriter(m_currentTextFile))
+			{
+				wtr.Write(m_textInput.Text);
+			}
+			m_textInput.Modified = false;
+			UpdateWindowTitle();
 		}
 
 		private void OnFileSaveAsClick(object sender, EventArgs e)
 		{
+			DoSaveAs();
+		}
+
+		private void DoSaveAs()
+		{
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				StreamWriter wtr = new StreamWriter(dlg.OpenFile());
-				wtr.Write(m_textInput.Text);
-				wtr.Close();
+				DoSave(dlg.FileName);
 			}
 		}
 
@@ -122,6 +222,8 @@ namespace DressingRoom
 
         private void OnUndoClick(object sender, EventArgs e)
         {
+            // TODO: implement multiple undo, using something like the technique at:
+            // http://www.developerfusion.com/article/16/richtextbox-control/11/
             m_textInput.Undo();
         }
 
@@ -159,6 +261,37 @@ namespace DressingRoom
         {
             this.noFootnotesToolStripMenuItem.Checked = !this.noFootnotesToolStripMenuItem.Checked;
             m_textileFormatter.FormatFootNotes = !this.noFootnotesToolStripMenuItem.Checked;
+        }
+
+        private void textileReferenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://hobix.com/textile/");
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DoTextileToHtml();
+        }
+
+        private void m_textInput_ModifiedChanged(object sender, EventArgs e)
+        {
+            UpdateWindowTitle();
+        }
+
+        private void DressingRoom_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (m_textInput.Modified)
+            {
+                // TODO: show a suitable confirmation dialog before auto-saving
+                if (!String.IsNullOrEmpty(m_currentTextFile))
+                {
+                    DoSave(m_currentTextFile);
+                }
+                else
+                {
+                    DoSaveAs();
+                }
+            }
         }
 	}
 }
