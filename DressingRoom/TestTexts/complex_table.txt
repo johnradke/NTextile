@@ -1,0 +1,4 @@
+table{border:1px solid black}.
+|_. this|_. is|_. a|_. header|
+<{background:gray}. |\2. this is|~{background:red;width:200px}. a|^<>{height:200px}. row or things that should be justified in the most beautiful way.|
+|this|<>{padding:10px}. is|^. another|>(bob#bob). row|

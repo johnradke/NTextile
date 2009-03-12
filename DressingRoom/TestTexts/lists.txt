@@ -1,0 +1,27 @@
+Simple list:
+
+#{color:blue} one
+# two
+# three
+
+Multi-level list:
+
+# one
+## aye
+## bee
+## see
+# two
+## x
+## y
+# three
+
+Mixed list:
+
+* Point one
+* Point two
+## Step 1
+## Step 2
+## Step 3
+* Point three
+** Sub point 1
+** Sub point 2

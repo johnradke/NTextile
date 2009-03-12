@@ -1,0 +1,8 @@
+"Comic.NET":http://comic.lordabdul.net and "Textile":http://www.textism.com/tools/textile allows you to add a few things to your webcomic:
+
+	* Some simple little news items like this
+	** Yep! Even nested lists!
+	* In which you can *format* stuff
+	* (among _other_ things)
+	
+This is really groovy.

@@ -1,0 +1,39 @@
+BODY 
+{
+	background-color: #CCCCCC;
+    margin: 10px;
+    color: #000000;
+	font-family: 'Times New Roman' , Serif;
+}
+TABLE 
+{
+    font-family: georgia, serif;
+    font-size: 11pt;
+    padding: 15px;
+}
+TH 
+{
+    border-bottom: solid 1px black;
+    font-size: 24pt;
+    font-weight: bold;
+    padding-top: 30px;
+}
+TD
+{
+}
+H1 
+{
+    font-size: 42pt;
+}
+H4 
+{
+    color: #666;
+    background-color: #fee;
+    border: solid 1px #caa;
+    margin: 10px 0px 5px 0px;
+    padding: 5px;
+}
+P 
+{
+    margin: 10px 15px 5px 15px;
+}

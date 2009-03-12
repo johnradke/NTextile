@@ -1,0 +1,12 @@
+This <code>is some code, "isn't it"</code>. Watch those quote marks! Now for some preformatted text:
+
+<pre>
+<code>
+	$text = str_replace("<p>%::%</p>","",$text);
+	$text = str_replace("%::%</p>","",$text);
+	$text = str_replace("%::%","",$text);
+
+</code>
+</pre>
+
+This isn't code.

@@ -1,0 +1,16 @@
+---
+in: |-
+  Testing a multiline blockquote...
+  
+  bq. This is a multiline
+  blockquote paragraph.
+  
+  And now it's over.
+
+out: |-
+  <p>Testing a multiline blockquote&#8230;</p>
+
+  <blockquote><p>This is a multiline<br />
+blockquote paragraph.</p></blockquote>
+
+  <p>And now it&#8217;s over.</p>
