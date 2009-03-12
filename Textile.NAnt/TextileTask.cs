@@ -33,6 +33,7 @@ namespace Textile.NAnt
         private DirectoryInfo _toDirectory;
         #endregion
 
+        // TODO: expose TextileFormatter's parameters as task properties
         #region Public Instance Properties
         /// <summary>
         /// The set of Textile files to convert.
@@ -77,11 +78,13 @@ namespace Textile.NAnt
             // get the complete path of the base directory of the fileset, ie, c:\work\nant\src
             DirectoryInfo srcBaseInfo = Inputs.BaseDirectory;
 
+            int numConvertedFiles = 0;
             foreach (string pathname in Inputs.FileNames)
             {
                 FileInfo srcInfo = new FileInfo(pathname);
                 if (srcInfo.Exists)
                 {
+                    #region Compute destination path
                     // Gets the relative path and file info from the full source filepath
                     // pathname = C:\f2\f3\file1, srcBaseInfo=C:\f2, then 
                     // dstRelFilePath=f3\file1
@@ -99,11 +102,37 @@ namespace Textile.NAnt
                     {
                         dstRelFilePath = dstRelFilePath.Substring(1);
                     }
+                    #endregion
 
                     // The full filepath of the destination
                     string dstFilePath = Path.Combine(ToDirectory.FullName, dstRelFilePath);
 
-                    // TODO: convert contents of file srcInfo to create file dstFilePath
+                    string parentFolder = Path.GetDirectoryName(dstFilePath);
+                    if (!Directory.Exists(parentFolder))
+                    {
+                        Directory.CreateDirectory(parentFolder);
+                    }
+
+                    #region Read, format and write
+                    string inputTextile;
+                    Log(Level.Debug, "Reading input file '{0}'", srcInfo.FullName);
+                    using (StreamReader sr = new StreamReader(srcInfo.FullName))
+                    {
+                        inputTextile = sr.ReadToEnd();
+                    }
+                    Log(Level.Verbose, "Converting textile from file '{0}' to an HTML string...", srcInfo.FullName);
+                    string outputHtml = TextileFormatter.FormatString(inputTextile);
+                    // TODO: make output extension configurable
+                    string outputPath = Path.ChangeExtension(dstFilePath, ".html");
+                    // TODO: Add a switch to optionally hide (or at least make it verbose) the following log statement
+                    Log(Level.Info, "Generating {0}...", outputPath);
+                    using (StreamWriter sw = new StreamWriter(outputPath))
+                    {
+                        sw.Write(outputHtml);
+                    }
+                    Log(Level.Verbose, "Generated {0}.", outputPath);
+                    #endregion
+                    numConvertedFiles++;
                 }
                 else
                 {
@@ -112,6 +141,7 @@ namespace Textile.NAnt
                         Location);
                 }
             }
+            Log(Level.Verbose, "Converted {0} files.", numConvertedFiles);
         }
     }
 }
