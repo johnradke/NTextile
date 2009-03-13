@@ -25,6 +25,21 @@ namespace Textile.NAnt
     ///     ]]>
     ///   </code>
     /// </example>
+    /// <example>
+    ///   <para>
+    ///     Convert a single folder of Textile input files into HTML and set all options to non-default values.
+    ///   </para>
+    ///   <code>
+    ///     <![CDATA[
+    /// <textile todir="Tests/Configured" headerOffset="1" linkRel="section"
+    ///     formatFootNotes="false" formatImages="false" formatLinks="false" formatLists="false" formatTables="false">
+    ///     <fileset basedir="DressingRoom\TestTexts">
+    ///         <include name="*.txt" />
+    ///     </fileset>
+    /// </textile>
+    ///     ]]>
+    ///   </code>
+    /// </example>
     [TaskName("textile")]
     public class TextileTask : Task
     {
@@ -75,7 +90,8 @@ namespace Textile.NAnt
         }
 
         /// <summary>
-        /// 
+        /// Determines whether footnotes should generate hyperlinks or be left as-is.
+        /// The default is <see langword="true"/>
         /// </summary>
         [TaskAttribute("formatFootNotes", Required = false)]
         public bool FormatFootNotes
@@ -91,7 +107,8 @@ namespace Textile.NAnt
         }
 
         /// <summary>
-        /// 
+        /// Determines whether URLs to images should generate <c>&lt;img&gt;</c> elements or be left as-is.
+        /// The default is <see langword="true"/>
         /// </summary>
         [TaskAttribute("formatImages", Required = false)]
         public bool FormatImages
@@ -107,7 +124,8 @@ namespace Textile.NAnt
         }
 
         /// <summary>
-        /// 
+        /// Determines whether URLs should generate hyperlinks or be left as-is.
+        /// The default is <see langword="true"/>
         /// </summary>
         [TaskAttribute("formatLinks", Required = false)]
         public bool FormatLinks
@@ -123,7 +141,8 @@ namespace Textile.NAnt
         }
 
         /// <summary>
-        /// 
+        /// Determines whether list markup should generate HTML lists or be left as-is.
+        /// The default is <see langword="true"/>
         /// </summary>
         [TaskAttribute("formatLists", Required = false)]
         public bool FormatLists
@@ -139,7 +158,8 @@ namespace Textile.NAnt
         }
 
         /// <summary>
-        /// 
+        /// Determines whether table markup should generate HTML tables or be left as-is.
+        /// The default is <see langword="true"/>
         /// </summary>
         [TaskAttribute("formatTables", Required = false)]
         public bool FormatTables
@@ -175,6 +195,7 @@ namespace Textile.NAnt
 
         /// <summary>
         /// The value of the 'rel' attribute to add to all links.
+        /// The default is an empty string, which means no <c>rel</c> attributes will be generated.
         /// </summary>
         [TaskAttribute("linkRel", Required = false)]
         public string LinkRel
