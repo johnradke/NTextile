@@ -31,9 +31,16 @@ namespace Textile.NAnt
         #region Private Instance Fields
         private FileSet _inputs = new FileSet();
         private DirectoryInfo _toDirectory;
+
+        private bool m_formatFootNotes = true;
+        private bool m_formatImages = true;
+        private bool m_formatLinks = true;
+        private bool m_formatLists = true;
+        private bool m_formatTables = true;
+        private int m_headerOffset = 0;
+        private string m_linkRel = String.Empty;
         #endregion
 
-        // TODO: expose TextileFormatter's parameters as task properties
         #region Public Instance Properties
         /// <summary>
         /// The set of Textile files to convert.
@@ -66,6 +73,121 @@ namespace Textile.NAnt
                 _toDirectory = value;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TaskAttribute("formatFootNotes", Required = false)]
+        public bool FormatFootNotes
+        {
+            get
+            {
+                return m_formatFootNotes;
+            }
+            set
+            {
+                m_formatFootNotes = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TaskAttribute("formatImages", Required = false)]
+        public bool FormatImages
+        {
+            get
+            {
+                return m_formatImages;
+            }
+            set
+            {
+                m_formatImages = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TaskAttribute("formatLinks", Required = false)]
+        public bool FormatLinks
+        {
+            get
+            {
+                return m_formatLinks;
+            }
+            set
+            {
+                m_formatLinks = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TaskAttribute("formatLists", Required = false)]
+        public bool FormatLists
+        {
+            get
+            {
+                return m_formatLists;
+            }
+            set
+            {
+                m_formatLists = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TaskAttribute("formatTables", Required = false)]
+        public bool FormatTables
+        {
+            get
+            {
+                return m_formatTables;
+            }
+            set
+            {
+                m_formatTables = value;
+            }
+        }
+
+        /// <summary>
+        /// The offset for the header tags.
+        /// </summary>
+        /// When the formatted text is inserted into another page
+        /// there might be a need to offset all headers (h1 becomes
+        /// h4, for instance). The header offset allows this.
+        [TaskAttribute("headerOffset", Required = false)]
+        public int HeaderOffset
+        {
+            get
+            {
+                return m_headerOffset;
+            }
+            set
+            {
+                m_headerOffset = value;
+            }
+        }
+
+        /// <summary>
+        /// The value of the 'rel' attribute to add to all links.
+        /// </summary>
+        [TaskAttribute("linkRel", Required = false)]
+        public string LinkRel
+        {
+            get
+            {
+                return m_linkRel;
+            }
+            set
+            {
+                m_linkRel = value;
+            }
+        }
         #endregion
 
         protected override void ExecuteTask()
@@ -77,6 +199,18 @@ namespace Textile.NAnt
             }
             // get the complete path of the base directory of the fileset, ie, c:\work\nant\src
             DirectoryInfo srcBaseInfo = Inputs.BaseDirectory;
+
+            #region Configure TextileFormatter
+            StringBuilderTextileFormatter sbtf = new StringBuilderTextileFormatter();
+            TextileFormatter tf = new TextileFormatter(sbtf);
+            tf.FormatFootNotes = this.FormatFootNotes;
+            tf.FormatImages = this.FormatImages;
+            tf.FormatLinks = this.FormatLinks;
+            tf.FormatLists = this.FormatLists;
+            tf.FormatTables = this.FormatTables;
+            tf.HeaderOffset = this.HeaderOffset;
+            tf.Rel = this.LinkRel;
+            #endregion
 
             int numConvertedFiles = 0;
             foreach (string pathname in Inputs.FileNames)
@@ -115,13 +249,17 @@ namespace Textile.NAnt
 
                     #region Read, format and write
                     string inputTextile;
+
                     Log(Level.Debug, "Reading input file '{0}'", srcInfo.FullName);
                     using (StreamReader sr = new StreamReader(srcInfo.FullName))
                     {
                         inputTextile = sr.ReadToEnd();
                     }
+
                     Log(Level.Verbose, "Converting textile from file '{0}' to an HTML string...", srcInfo.FullName);
-                    string outputHtml = TextileFormatter.FormatString(inputTextile);
+                    tf.Format(inputTextile);
+                    string outputHtml = sbtf.GetFormattedText();
+
                     // TODO: make output extension configurable
                     string outputPath = Path.ChangeExtension(dstFilePath, ".html");
                     // TODO: Add a switch to optionally hide (or at least make it verbose) the following log statement
