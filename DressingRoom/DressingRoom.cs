@@ -273,7 +273,7 @@ namespace DressingRoom
 
         private void textileReferenceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://hobix.com/textile/");
+            System.Diagnostics.Process.Start ("http://redcloth.org/hobix.com/textile/");
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
