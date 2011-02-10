@@ -212,29 +212,27 @@ namespace DressingRoom
 
         private void OnCutClick(object sender, EventArgs e)
         {
-            m_textInput.Cut();
+            m_textInput.NativeInterface.Cut();
         }
 
         private void OnCopyClick(object sender, EventArgs e)
         {
-            m_textInput.Copy();
+            m_textInput.NativeInterface.Copy();
         }
 
         private void OnPasteClick(object sender, EventArgs e)
         {
-            m_textInput.Paste();
+            m_textInput.NativeInterface.Paste();
         }
 
         private void OnSelectAllClick(object sender, EventArgs e)
         {
-            m_textInput.SelectAll();
+            m_textInput.NativeInterface.SelectAll();
         }
 
         private void OnUndoClick(object sender, EventArgs e)
         {
-            // TODO: implement multiple undo, using something like the technique at:
-            // http://www.developerfusion.com/article/16/richtextbox-control/11/
-            m_textInput.Undo();
+            m_textInput.NativeInterface.Undo();
         }
 
         private void OnAboutClick(object sender, EventArgs e)

@@ -59,7 +59,7 @@ namespace DressingRoom
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.m_statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.m_textInput = new System.Windows.Forms.TextBox();
+            this.m_textInput = new ScintillaNet.Scintilla();
             this.m_webBrowser = new System.Windows.Forms.WebBrowser();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -340,9 +340,8 @@ namespace DressingRoom
             this.m_textInput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_textInput.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_textInput.Location = new System.Drawing.Point(0, 0);
-            this.m_textInput.Multiline = true;
             this.m_textInput.Name = "m_textInput";
-            this.m_textInput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.m_textInput.Scrolling.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.m_textInput.Size = new System.Drawing.Size(338, 368);
             this.m_textInput.TabIndex = 0;
             this.m_textInput.Text = "Type your \"Textile\":http://www.textism.com/tools/textile text here.\r\nGo on! It\'s " +
@@ -387,7 +386,7 @@ namespace DressingRoom
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.TextBox m_textInput;
+		private ScintillaNet.Scintilla m_textInput;
 		private System.Windows.Forms.WebBrowser m_webBrowser;
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
