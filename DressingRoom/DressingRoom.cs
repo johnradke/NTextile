@@ -41,8 +41,18 @@ namespace DressingRoom
 			m_textileFormatter = new Textile.TextileFormatter(m_textileOutput);
 
 			System.Reflection.Assembly thisExe = System.Reflection.Assembly.GetExecutingAssembly();
-			string styleContent;
-			using (Stream css = thisExe.GetManifestResourceStream("DressingRoom.Default.css"))
+		    var absolutePathToCustomCss = Path.ChangeExtension(Application.ExecutablePath, ".css");
+		    Stream css;
+		    if (File.Exists(absolutePathToCustomCss))
+		    {
+		        css = new FileStream(absolutePathToCustomCss, FileMode.Open, FileAccess.Read, FileShare.Read);
+		    }
+		    else
+		    {
+		        css = thisExe.GetManifestResourceStream("DressingRoom.Default.css");
+		    }
+            string styleContent;
+            using (css)
 			{
 				using (StreamReader rdr = new StreamReader(css))
 				{
