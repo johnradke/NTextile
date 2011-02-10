@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace DressingRoom
@@ -13,7 +13,7 @@ namespace DressingRoom
 		static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
-			string pathToOpen = args.Length > 0 ? args[0] : String.Empty;
+			string pathToOpen = args.Length > 0 ? Path.GetFullPath(args[0]) : String.Empty;
 			DressingRoom form = new DressingRoom();
 			form.Show();
 			form.DoOpen(pathToOpen);
