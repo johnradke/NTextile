@@ -33,6 +33,7 @@ namespace DressingRoom
 		string m_currentTextFile = null;
 		HtmlElement m_bodyElement = null;
 		string m_cachedHtml = null;
+	    string m_searchText = null;
 
         internal static int Colour(byte red, byte green, byte blue)
         {
@@ -377,6 +378,42 @@ namespace DressingRoom
                     }
                 }
             }
+            else if (Keys.F3 == e.KeyCode)
+            {
+                if (e.Control)
+                {
+                    if (e.Shift)
+                    {
+                        // start reverse find of selected text
+                        m_searchText = m_textInput.Selection.Text;
+                        Select(m_textInput.FindReplace.FindPrevious(m_searchText, true));
+                    }
+                    else if (!e.Alt)
+                    {
+                        // start forward find of selected text
+                        m_searchText = m_textInput.Selection.Text;
+                        Select(m_textInput.FindReplace.FindNext(m_searchText, true));
+                    }
+                }
+                else
+                {
+                    if (e.Shift)
+                    {
+                       // continue reverse find (search up) 
+                        Select(m_textInput.FindReplace.FindPrevious(m_searchText, true));
+                    }
+                    else if (!e.Alt)
+                    {
+                        // continue forward find (search down)
+                        Select(m_textInput.FindReplace.FindNext(m_searchText, true));
+                    }
+                }
+            }
+        }
+
+        private void Select(Range range)
+        {
+            m_textInput.Selection.Range = range;
         }
 	}
 }
