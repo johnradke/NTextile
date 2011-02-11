@@ -339,5 +339,44 @@ namespace DressingRoom
         {
             UpdateCursorPosition();
         }
+
+        private void m_textInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            var lines = m_textInput.Lines;
+            var currentLine = lines.Current;
+            if (Keys.F2 == e.KeyCode)
+            {
+                if (e.Control)
+                {
+                    // toggle bookmark
+                    if (m_textInput.Markers.GetMarkerMask(currentLine) == 0)
+                    {
+                        currentLine.AddMarker(0);
+                    }
+                    else
+                    {
+                        currentLine.DeleteMarker(0);
+                    }
+                }
+                else if (e.Shift)
+                {
+                    // go to previous bookmark
+                    var l = currentLine.FindPreviousMarker(1) ?? lines[lines.Count - 1].FindPreviousMarker(1);
+                    if (l != null)
+                    {
+                        l.Goto();
+                    }
+                }
+                else if (!e.Alt)
+                {
+                    // go to next bookmark 
+                    var l = currentLine.FindNextMarker(1) ?? lines[0].FindNextMarker(1);
+                    if (l != null)
+                    {
+                        l.Goto();
+                    }
+                }
+            }
+        }
 	}
 }

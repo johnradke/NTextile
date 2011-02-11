@@ -354,6 +354,9 @@ namespace DressingRoom
             this.m_textInput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_textInput.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_textInput.Location = new System.Drawing.Point(0, 0);
+            this.m_textInput.Margins.Margin0.Width = 20;
+            this.m_textInput.Margins.Margin1.AutoToggleMarkerNumber = 0;
+            this.m_textInput.Margins.Margin1.IsClickable = true;
             this.m_textInput.Name = "m_textInput";
             this.m_textInput.Scrolling.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.m_textInput.Size = new System.Drawing.Size(338, 368);
@@ -371,6 +374,7 @@ namespace DressingRoom
             this.m_textInput.Click += new System.EventHandler(this.m_textInput_Click);
             this.m_textInput.ModifiedChanged += new System.EventHandler(this.m_textInput_ModifiedChanged);
             this.m_textInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_textInput_KeyUp);
+            this.m_textInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_textInput_KeyDown);
             // 
             // m_webBrowser
             // 
