@@ -235,6 +235,11 @@ namespace DressingRoom
             m_textInput.NativeInterface.Undo();
         }
 
+        private void OnRedoClick (object sender, EventArgs e)
+        {
+            m_textInput.NativeInterface.Redo();
+        }
+
         private void OnAboutClick(object sender, EventArgs e)
         {
             AboutDressingRoom dlg = new AboutDressingRoom();
