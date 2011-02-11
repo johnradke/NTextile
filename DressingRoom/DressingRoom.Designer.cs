@@ -354,7 +354,7 @@ namespace DressingRoom
             this.m_textInput.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_textInput.Location = new System.Drawing.Point(0, 0);
             this.m_textInput.Name = "m_textInput";
-            this.m_textInput.Scrolling.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.m_textInput.Scrolling.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.m_textInput.Size = new System.Drawing.Size(338, 368);
             this.m_textInput.TabIndex = 0;
             this.m_textInput.Text = "Type your \"Textile\":http://www.textism.com/tools/textile text here.\r\nGo on! It\'s " +

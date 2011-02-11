@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using ScintillaNet;
 using Textile;
 #endregion
 
@@ -32,6 +33,11 @@ namespace DressingRoom
 		string m_currentTextFile = null;
 		HtmlElement m_bodyElement = null;
 		string m_cachedHtml = null;
+
+        internal static int Colour(byte red, byte green, byte blue)
+        {
+            return red | (green << 8) | (blue << 16);
+        }
 
 		public DressingRoom()
 		{
@@ -69,6 +75,15 @@ namespace DressingRoom
 	<body id='body'>
 	</body>
 </html>", styleContent);
+
+            var ni = m_textInput.NativeInterface;
+            ni.SetCaretLineBack(Colour(0xdc, 0xff, 0xff));
+            ni.SetCaretLineVisible(true);
+            m_textInput.Selection.ForeColor = Color.Transparent;
+            m_textInput.Selection.ForeColorUnfocused = Color.Transparent;
+            m_textInput.Selection.BackColor = Color.FromArgb(224, 224, 224);
+            m_textInput.Selection.BackColorUnfocused = Color.FromArgb(240, 240, 240);
+            ni.SetWrapMode((int)WrapMode.Word);
 
 			// disable links, since we operate on the assumption we can simply substitute the contents of <body>
 			m_webBrowser.AllowNavigation = false;
