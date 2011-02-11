@@ -67,6 +67,7 @@ namespace DressingRoom
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_textInput)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -102,7 +103,7 @@ namespace DressingRoom
             this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.OnFileNewClick);
             // 
@@ -112,14 +113,14 @@ namespace DressingRoom
             this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OnFileOpenClick);
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(147, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -127,26 +128,26 @@ namespace DressingRoom
             this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnFileSaveClick);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.OnFileSaveAsClick);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(147, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnFileExitClick);
             // 
@@ -246,42 +247,42 @@ namespace DressingRoom
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // noImagesToolStripMenuItem
             // 
             this.noImagesToolStripMenuItem.Name = "noImagesToolStripMenuItem";
-            this.noImagesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.noImagesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.noImagesToolStripMenuItem.Text = "No Images";
             this.noImagesToolStripMenuItem.Click += new System.EventHandler(this.OnNoImagesClick);
             // 
             // noLinksToolStripMenuItem
             // 
             this.noLinksToolStripMenuItem.Name = "noLinksToolStripMenuItem";
-            this.noLinksToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.noLinksToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.noLinksToolStripMenuItem.Text = "No Links";
             this.noLinksToolStripMenuItem.Click += new System.EventHandler(this.OnNoLinksClick);
             // 
             // noListsToolStripMenuItem
             // 
             this.noListsToolStripMenuItem.Name = "noListsToolStripMenuItem";
-            this.noListsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.noListsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.noListsToolStripMenuItem.Text = "No Lists";
             this.noListsToolStripMenuItem.Click += new System.EventHandler(this.OnNoListsClick);
             // 
             // noTablesToolStripMenuItem
             // 
             this.noTablesToolStripMenuItem.Name = "noTablesToolStripMenuItem";
-            this.noTablesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.noTablesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.noTablesToolStripMenuItem.Text = "No Tables";
             this.noTablesToolStripMenuItem.Click += new System.EventHandler(this.OnNoTablesClick);
             // 
             // noFootnotesToolStripMenuItem
             // 
             this.noFootnotesToolStripMenuItem.Name = "noFootnotesToolStripMenuItem";
-            this.noFootnotesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.noFootnotesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.noFootnotesToolStripMenuItem.Text = "No Footnotes";
             this.noFootnotesToolStripMenuItem.Click += new System.EventHandler(this.OnNoFootnotesClick);
             // 
@@ -322,7 +323,7 @@ namespace DressingRoom
             // m_statusLabel
             // 
             this.m_statusLabel.Name = "m_statusLabel";
-            this.m_statusLabel.Size = new System.Drawing.Size(175, 17);
+            this.m_statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // splitContainer1
             // 
@@ -356,6 +357,14 @@ namespace DressingRoom
             this.m_textInput.Name = "m_textInput";
             this.m_textInput.Scrolling.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.m_textInput.Size = new System.Drawing.Size(338, 368);
+            this.m_textInput.Styles.BraceBad.FontName = "Verdana";
+            this.m_textInput.Styles.BraceLight.FontName = "Verdana";
+            this.m_textInput.Styles.ControlChar.FontName = "Verdana";
+            this.m_textInput.Styles.Default.FontName = "Verdana";
+            this.m_textInput.Styles.IndentGuide.FontName = "Verdana";
+            this.m_textInput.Styles.LastPredefined.FontName = "Verdana";
+            this.m_textInput.Styles.LineNumber.FontName = "Verdana";
+            this.m_textInput.Styles.Max.FontName = "Verdana";
             this.m_textInput.TabIndex = 0;
             this.m_textInput.Text = "Type your \"Textile\":http://www.textism.com/tools/textile text here.\r\nGo on! It\'s " +
                 "easy...";
@@ -388,9 +397,9 @@ namespace DressingRoom
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.m_textInput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
