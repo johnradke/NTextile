@@ -166,7 +166,7 @@ namespace DressingRoom
 		{
 			string fileName = FormatPathNicely(m_currentTextFile);
 			char modified = m_textInput.Modified ? '*' : '-';
-			this.Text = String.Format("{0} {1} The Dressing Room - A Textile Test Tool", fileName, modified);
+			this.Text = String.Format("{0} {1} The Dressing Room", fileName, modified);
 		}
 
 		internal static string FormatPathNicely(string path)
