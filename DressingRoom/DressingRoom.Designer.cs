@@ -323,7 +323,6 @@ namespace DressingRoom
             // 
             this.m_statusLabel.Name = "m_statusLabel";
             this.m_statusLabel.Size = new System.Drawing.Size(175, 17);
-            this.m_statusLabel.Text = "TODO: write useful stuff here";
             // 
             // splitContainer1
             // 
@@ -356,7 +355,9 @@ namespace DressingRoom
             this.m_textInput.TabIndex = 0;
             this.m_textInput.Text = "Type your \"Textile\":http://www.textism.com/tools/textile text here.\r\nGo on! It\'s " +
                 "easy...";
+            this.m_textInput.Click += new System.EventHandler(this.m_textInput_Click);
             this.m_textInput.ModifiedChanged += new System.EventHandler(this.m_textInput_ModifiedChanged);
+            this.m_textInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_textInput_KeyUp);
             // 
             // m_webBrowser
             // 

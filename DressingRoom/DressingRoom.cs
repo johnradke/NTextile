@@ -119,6 +119,7 @@ namespace DressingRoom
 		private void OnFileNewClick(object sender, EventArgs e)
 		{
 			m_textInput.Text = string.Empty;
+            UpdateCursorPosition();
 			DoTextileToHtml();
 			m_textInput.Modified = false;
 			UpdateWindowTitle();
@@ -141,6 +142,7 @@ namespace DressingRoom
 				using (StreamReader rdr = File.OpenText(m_currentTextFile))
 				{
 					m_textInput.Text = rdr.ReadToEnd();
+                    UpdateCursorPosition();
 				}
 				DoTextileToHtml();
 				m_textInput.Modified = false;
@@ -305,6 +307,23 @@ namespace DressingRoom
                     DoSaveAs();
                 }
             }
+        }
+
+        private void UpdateCursorPosition()
+        {
+            var caret = m_textInput.Caret;
+            var column = m_textInput.NativeInterface.GetColumn (caret.Position);
+            m_statusLabel.Text = String.Format ("li={0} co={1}", 1 + caret.LineNumber, 1 + column);
+        }
+
+        private void m_textInput_Click (object sender, EventArgs e)
+        {
+            UpdateCursorPosition();
+        }
+
+        private void m_textInput_KeyUp (object sender, KeyEventArgs e)
+        {
+            UpdateCursorPosition();
         }
 	}
 }
