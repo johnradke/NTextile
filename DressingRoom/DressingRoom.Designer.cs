@@ -346,6 +346,10 @@ namespace DressingRoom
             // 
             // m_textInput
             // 
+            this.m_textInput.ConfigurationManager.CustomLocation = "ScintillaNET.xml";
+            this.m_textInput.ConfigurationManager.IsUserEnabled = false;
+            this.m_textInput.ConfigurationManager.Language = "html";
+            this.m_textInput.ConfigurationManager.LoadOrder = ScintillaNet.Configuration.ConfigurationLoadOrder.CustomBuiltInUser;
             this.m_textInput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_textInput.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_textInput.Location = new System.Drawing.Point(0, 0);
