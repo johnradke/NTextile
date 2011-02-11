@@ -60,7 +60,6 @@ namespace DressingRoom
 				}
 			}
 
-			// TODO: it may eventually be useful to allow users to specify their own stylesheet/CSS
 			m_webBrowser.DocumentText = String.Format(@"<html>
 	<head>
 		<style>
