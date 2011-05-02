@@ -11,13 +11,21 @@ namespace Textile.UnitTests
         [STAThread]
         static void Main(string[] args)
         {
-            ConsoleUi runner = new ConsoleUi();
-            Assembly assy = Assembly.GetExecutingAssembly();
-            ConsoleOptions options = new ConsoleOptions(new string[] { assy.Location });
-            runner.Execute(options);
+			var stopwatch = new System.Diagnostics.Stopwatch();
+			stopwatch.Start();
 
-            Console.WriteLine("Press any key to continue...");
-            Console.In.ReadLine();
+            Assembly assy = Assembly.GetExecutingAssembly();
+            Runner.Main(new string[] { assy.Location });
+
+			stopwatch.Stop();
+			Console.WriteLine();
+			Console.WriteLine("Ran unit-tests in {0} seconds", stopwatch.Elapsed.TotalSeconds);
+
+			if (System.Diagnostics.Debugger.IsAttached)
+			{
+				Console.WriteLine("Press any key to continue...");
+				Console.In.ReadLine();
+			}
         }
     }
 }

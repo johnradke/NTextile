@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Core;
-using NUnit.Framework;
 using System.Text.RegularExpressions;
+using NUnit.Framework;
 
 namespace Textile.UnitTests
 {
@@ -54,20 +53,16 @@ namespace Textile.UnitTests
             ReadingMultilineOut,
         }
 
-        [Test]
-        public void TestDataFiles()
+        public static string[] GetTestDataFiles()
         {
-            string[] dataFiles = System.IO.Directory.GetFiles("..\\..\\TestData", "*.yml");
-            foreach (string dataFile in dataFiles)
-            {
-                Console.Write(".");
-                TestDataFiles(dataFile);
-            }
+            return System.IO.Directory.GetFiles(@"..\..\TestData", "*.yml");
         }
 
         private const string TestDataPreamblePattern = @"^[\-]{3,}\s*(#.*)?$";
 
-        private void TestDataFiles(string dataFile)
+		[Test]
+		[TestCaseSource("GetTestDataFiles")]
+        public void TestDataFile(string dataFile)
         {
             string[] dataLines = System.IO.File.ReadAllLines(dataFile);
 
