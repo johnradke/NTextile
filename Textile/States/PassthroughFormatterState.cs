@@ -5,18 +5,17 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(@"^\s*<(h[0-9]|p|pre|blockquote)" + Globals.HtmlAttributesPattern + ">")]
+    [FormatterState(@"^\s*<(h[0-9]|p|pre|blockquote)" + TextileGlobals.HtmlAttributesPattern + ">")]
     public class PassthroughFormatterState : FormatterState
     {
-        public PassthroughFormatterState(TextileFormatter f)
-            : base(f)
+        public PassthroughFormatterState()
         {
         }
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            this.Formatter.ChangeState(this);
-            return input;
+            Formatter.ChangeState(this);
+            return context.Input;
         }
 
         public override bool ShouldNestState(FormatterState other)
@@ -37,7 +36,7 @@ namespace Textile.States
             Formatter.Output.WriteLine(input);
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             return true;
         }

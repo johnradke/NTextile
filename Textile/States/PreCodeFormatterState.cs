@@ -5,11 +5,10 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(SimpleBlockFormatterState.PatternBegin + @"bc" + SimpleBlockFormatterState.PatternEnd)]
+    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"bc" + SimpleBlockFormatterState.TextilePatternEnd)]
     public class PreCodeFormatterState : SimpleBlockFormatterState
     {
-        public PreCodeFormatterState(TextileFormatter formatter)
-            : base(formatter)
+        public PreCodeFormatterState()
         {
         }
 
@@ -28,7 +27,7 @@ namespace Textile.States
             Formatter.Output.WriteLine(FixEntities(input));
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (Regex.IsMatch(input, @"^\s*$"))
                 return true;

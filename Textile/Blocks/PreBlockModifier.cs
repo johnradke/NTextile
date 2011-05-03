@@ -27,7 +27,7 @@ namespace Textile.Blocks
             // Encode the contents of the "<pre>" tags so that we don't
             // generate formatting out of it.
             line = NoTextileEncoder.EncodeNoTextileZones(line,
-                                  @"(?<=(^|\s)<pre(" + Globals.HtmlAttributesPattern + @")>)",
+                                  @"(?<=(^|\s)<pre(" + TextileGlobals.HtmlAttributesPattern + @")>)",
                                   @"(?=</pre>)");
             return line;
         }
@@ -36,7 +36,7 @@ namespace Textile.Blocks
         {
             // Recode everything.
             line = NoTextileEncoder.DecodeNoTextileZones(line,
-                                    @"(?<=(^|\s)<pre(" + Globals.HtmlAttributesPattern + @")>)",
+                                    @"(?<=(^|\s)<pre(" + TextileGlobals.HtmlAttributesPattern + @")>)",
                                     @"(?=</pre>)",
                                     new string[] { "<", ">" });
             return line;

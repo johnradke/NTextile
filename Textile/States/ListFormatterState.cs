@@ -23,10 +23,10 @@ namespace Textile.States
     /// <summary>
     /// Base formatting state for all lists.
     /// </summary>
-    abstract public class ListFormatterState : FormatterState
+    public abstract class ListFormatterState : FormatterState
     {
         internal const string PatternBegin = @"^\s*(?<tag>";
-        internal const string PatternEnd = @")" + Globals.BlockModifiersPattern + @"(?:\s+)? (?<content>.*)$";
+        internal const string PatternEnd = @")" + TextileGlobals.BlockModifiersPattern + @"(?:\s+)? (?<content>.*)$";
 
         private bool m_firstItem = true;
         private bool m_firstItemLine = true;
@@ -39,17 +39,16 @@ namespace Textile.States
             get { return m_tag.Length; }
         }
 
-        public ListFormatterState(TextileFormatter formatter)
-            : base(formatter)
+        public ListFormatterState()
         {
         }
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            m_tag = m.Groups["tag"].Value;
-            m_alignInfo = m.Groups["align"].Value;
-            m_attsInfo = m.Groups["atts"].Value;
-            input = m.Groups["content"].Value;
+            m_tag = context.Match.Groups["tag"].Value;
+            m_alignInfo = context.Match.Groups["align"].Value;
+            m_attsInfo = context.Match.Groups["atts"].Value;
+            string input = context.Match.Groups["content"].Value;
 
             this.Formatter.ChangeState(this);
 
@@ -92,7 +91,7 @@ namespace Textile.States
             return (listState.NestingDepth > NestingDepth);
         }
 
-        public sealed override bool ShouldExit(string input)
+		public sealed override bool ShouldExit(string input, string inputLookAhead)
         {
             // If we have an empty line, we can exit.
             if (string.IsNullOrEmpty(input))

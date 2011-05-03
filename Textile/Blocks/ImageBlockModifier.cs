@@ -21,12 +21,14 @@ namespace Textile.Blocks
 {
     public class ImageBlockModifier : BlockModifier
     {
+        private static readonly Regex HrefRegex = new Regex(@"(.*)(?<end>\.|,|;|\))$");
+
         public override string ModifyLine(string line)
         {
             line = Regex.Replace(line,
                                     @"\!" +                   // opening !
                                     @"(?<algn>\<|\=|\>)?" +   // optional alignment atts
-                                    Globals.BlockModifiersPattern + // optional style, public class atts
+                                    TextileGlobals.BlockModifiersPattern + // optional style, public class atts
                                     @"(?:\. )?" +             // optional dot-space
                                     @"(?<url>[^\s(!]+)" +     // presume this is the src
                                     @"\s?" +                  // optional space
@@ -43,7 +45,7 @@ namespace Textile.Blocks
         {
             string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "");
             if (m.Groups["algn"].Length > 0)
-                atts += " align=\"" + Globals.ImageAlign[m.Groups["algn"].Value] + "\"";
+                atts += " align=\"" + TextileGlobals.ImageAlign[m.Groups["algn"].Value] + "\"";
             if (m.Groups["title"].Length > 0)
             {
                 atts += " title=\"" + m.Groups["title"].Value + "\"";
@@ -61,13 +63,13 @@ namespace Textile.Blocks
             {
                 string href = m.Groups["href"].Value;
                 string end = string.Empty;
-                Match endMatch = Regex.Match(href, @"(.*)(?<end>\.|,|;|\))$");
+                Match endMatch = HrefRegex.Match(href);
                 if (m.Success && !string.IsNullOrEmpty(endMatch.Groups["end"].Value))
                 {
                     href = href.Substring(0, href.Length - 1);
                     end = endMatch.Groups["end"].Value;
                 }
-                res = "<a href=\"" + Globals.EncodeHTMLLink(href) + "\">" + res + "</a>" + end;
+                res = "<a href=\"" + TextileGlobals.EncodeHTMLLink(href) + "\">" + res + "</a>" + end;
             }
 
             return res;

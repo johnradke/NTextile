@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Textile.Blocks
 {
     public class InsertedPhraseBlockModifier : PhraseBlockModifier
     {
+        private static readonly Regex BlockRegex = new Regex(PhraseBlockModifier.GetPhraseModifierPattern(@"\+"), TextileGlobals.BlockModifierRegexOptions);
+
         public override string ModifyLine(string line)
         {
-            return PhraseModifierFormat(line, @"\+", "ins");
+            return PhraseModifierFormat(line, BlockRegex, "ins");
         }
     }
 }

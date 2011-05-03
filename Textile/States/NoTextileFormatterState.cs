@@ -10,18 +10,17 @@ namespace Textile.States
     {
         bool m_shouldExitNextTime = false;
 
-        public NoTextileFormatterState(TextileFormatter f)
-            : base(f)
+        public NoTextileFormatterState()
         {
         }
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            this.Formatter.ChangeState(this);
-            
-            if (m.Groups["tag"].Value == "<notextile>")
+            Formatter.ChangeState(this);
+
+            if (context.Match.Groups["tag"].Value == "<notextile>")
                 return string.Empty;
-            return input.Substring(m.Length);
+            return context.Input.Substring(context.Match.Length);
         }
 
         public override bool ShouldNestState(FormatterState other)
@@ -43,7 +42,7 @@ namespace Textile.States
                 Formatter.Output.WriteLine(input);
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (m_shouldExitNextTime)
                 return true;

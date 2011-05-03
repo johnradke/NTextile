@@ -5,31 +5,32 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(@"^\s*(" + Globals.AlignPattern + Globals.BlockModifiersPattern + @"\.\s?)?" +
-                                   @"\|(?<content>.*)\|\s*$")]
+    [FormatterState(@"^\s*(" + 
+                    TextileGlobals.AlignPattern + 
+                    TextileGlobals.BlockModifiersPattern + 
+                    @"\.\s?)?" +
+                    @"\|(?<content>.*)\|\s*$")]
     public class TableRowFormatterState : FormatterState
     {
         private string m_attsInfo;
         private string m_alignInfo;
 
-        public TableRowFormatterState(TextileFormatter f)
-            : base(f)
+        public TableRowFormatterState()
         {
         }
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            m_alignInfo = m.Groups["align"].Value;
-            m_attsInfo = m.Groups["atts"].Value;
-            input = string.Format("|{0}|", m.Groups["content"].Value);
+            m_alignInfo = context.Match.Groups["align"].Value;
+            m_attsInfo = context.Match.Groups["atts"].Value;
+            string input = string.Format("|{0}|", context.Match.Groups["content"].Value);
 
             if (!(this.Formatter.CurrentState is TableFormatterState))
             {
-                TableFormatterState s = new TableFormatterState(this.Formatter);
-                this.Formatter.ChangeState(s);
+				this.Formatter.ChangeState(new TableFormatterState());
             }
 
-            this.Formatter.ChangeState(this);
+            Formatter.ChangeState(this);
 
             return input;
         }
@@ -66,7 +67,7 @@ namespace Textile.States
             Formatter.Output.WriteLine(formattedLine);
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             return true;
         }

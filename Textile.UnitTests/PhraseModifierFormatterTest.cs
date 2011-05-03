@@ -178,7 +178,7 @@ namespace Textile.UnitTests
         public void PhraseModifierFormatTestAllMixed()
         {
             string input = "I seriously *{color:red}blushed* when I _(big)sprouted_ that corn stalk from my %[es]cabeza%.";
-            string expected = "<p>I seriously <strong style=\"color:red;\">blushed</strong> when I <em class=\"big\">sprouted</em> that corn stalk from my <span lang=\"es\">cabeza</span>.</p>\r\n";
+            string expected = "<p>I seriously <strong style=\"color:red;\">blushed</strong> when I <em class=\"big\">sprouted</em> that corn stalk from my <span lang=\"es\">cabeza</span>.</p>\n";
             string actual = TextileFormatter.FormatString(input);
 
             Assert.AreEqual(expected, actual);

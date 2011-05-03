@@ -26,8 +26,7 @@ namespace Textile.States
     [FormatterState(ListFormatterState.PatternBegin + @"\*+" + ListFormatterState.PatternEnd)]
 	public class UnorderedListFormatterState : ListFormatterState
 	{
-		public UnorderedListFormatterState(TextileFormatter formatter)
-			: base(formatter)
+		public UnorderedListFormatterState()
 		{
 		}
 
@@ -43,12 +42,12 @@ namespace Textile.States
 
         protected override bool IsMatchForMe(string input, int minNestingDepth, int maxNestingDepth)
         {
-            return Regex.IsMatch(input, @"^\s*[\*]{" + minNestingDepth + @"," + maxNestingDepth + @"}" + Globals.BlockModifiersPattern + @"\s");
+            return Regex.IsMatch(input, @"^\s*[\*]{" + minNestingDepth + @"," + maxNestingDepth + @"}" + TextileGlobals.BlockModifiersPattern + @"\s");
         }
 
         protected override bool IsMatchForOthers(string input, int minNestingDepth, int maxNestingDepth)
         {
-            return Regex.IsMatch(input, @"^\s*[#]{" + minNestingDepth + @"," + maxNestingDepth + @"}" + Globals.BlockModifiersPattern + @"\s");
+            return Regex.IsMatch(input, @"^\s*[#]{" + minNestingDepth + @"," + maxNestingDepth + @"}" + TextileGlobals.BlockModifiersPattern + @"\s");
         }
     }
 }

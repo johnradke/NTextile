@@ -22,11 +22,10 @@ namespace Textile.States
     /// <summary>
     /// Formatting state for a standard text (i.e. just paragraphs).
     /// </summary>
-    [FormatterState(SimpleBlockFormatterState.PatternBegin + @"p" + SimpleBlockFormatterState.PatternEnd)]
+    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"p" + SimpleBlockFormatterState.TextilePatternEnd)]
     public class ParagraphFormatterState : SimpleBlockFormatterState
     {
-        public ParagraphFormatterState(TextileFormatter f)
-            : base(f)
+        public ParagraphFormatterState()
         {
         }
 
@@ -45,7 +44,7 @@ namespace Textile.States
             Formatter.Output.Write(input);
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (Regex.IsMatch(input, @"^\s*$"))
                 return true;

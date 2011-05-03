@@ -20,13 +20,14 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(SimpleBlockFormatterState.PatternBegin + @"fn[0-9]+" + SimpleBlockFormatterState.PatternEnd)]
+    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"fn[0-9]+" + SimpleBlockFormatterState.TextilePatternEnd)]
     public class FootNoteFormatterState : SimpleBlockFormatterState
     {
-        int m_noteID = 0;
+        private static readonly Regex FootNoteRegex = new Regex(@"^fn(?<id>[0-9]+)");
 
-        public FootNoteFormatterState(TextileFormatter f)
-            : base(f)
+        private int m_noteID = 0;
+
+		public FootNoteFormatterState()
         {
         }
 
@@ -49,13 +50,13 @@ namespace Textile.States
             Formatter.Output.Write(input);
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             return true;
         }
         protected override void OnContextAcquired()
         {
-            Match m = Regex.Match(Tag, @"^fn(?<id>[0-9]+)");
+            Match m = FootNoteRegex.Match(Tag);
             m_noteID = Int32.Parse(m.Groups["id"].Value);
         }
 

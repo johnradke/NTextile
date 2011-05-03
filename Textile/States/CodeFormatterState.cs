@@ -5,28 +5,27 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(@"^\s*<code" + Globals.HtmlAttributesPattern + ">")]
+    [FormatterState(@"^\s*<code" + TextileGlobals.HtmlAttributesPattern + ">")]
     public class CodeFormatterState : FormatterState
     {
         bool m_shouldExitNextTime = false;
         bool m_shouldFixHtmlEntities = false;
 
-        public CodeFormatterState(TextileFormatter f)
-            : base(f)
+        public CodeFormatterState()
         {
         }
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            if (!Regex.IsMatch(input, "</code>"))
+            if (!Regex.IsMatch(context.Input, "</code>"))
             {
                 this.Formatter.ChangeState(this);
             }
             else
             {
-                this.Formatter.ChangeState(new PassthroughFormatterState(this.Formatter));
+                this.Formatter.ChangeState(new PassthroughFormatterState());
             }
-            return input;
+            return context.Input;
         }
 
         public override bool ShouldNestState(FormatterState other)
@@ -51,7 +50,7 @@ namespace Textile.States
             m_shouldFixHtmlEntities = true;
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (m_shouldExitNextTime)
                 return true;

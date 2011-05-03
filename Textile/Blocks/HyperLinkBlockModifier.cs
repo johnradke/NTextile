@@ -27,9 +27,9 @@ namespace Textile.Blocks
         public override string ModifyLine(string line)
         {
             line = Regex.Replace(line,
-                                    @"(?<pre>[\s[{(]|" + Globals.PunctuationPattern + @")?" +       // $pre
+                                    @"(?<pre>[\s[{(]|" + TextileGlobals.PunctuationPattern + @")?" +       // $pre
                                     "\"" +									// start
-                                    Globals.BlockModifiersPattern +			// attributes
+                                    TextileGlobals.BlockModifiersPattern +			// attributes
                                     "(?<text>[^\"(]+)" +					// text
                                     @"\s?" +
 									@"(?:\((?<title>[^)]+)\)(?=""))?" +		// title
@@ -54,7 +54,7 @@ namespace Textile.Blocks
 			if (m_rel != null && m_rel != string.Empty)
 				str += "ref=\"" + m_rel + "\" ";
 			str += "href=\"" +
-				  Globals.EncodeHTMLLink(m.Groups["url"].Value) + m.Groups["slash"].Value + "\"" +
+				  TextileGlobals.EncodeHTMLLink(m.Groups["url"].Value) + m.Groups["slash"].Value + "\"" +
 				  atts +
 				  ">" + linkText + "</a>" + m.Groups["post"].Value;
             return str;

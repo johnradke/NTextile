@@ -7,27 +7,30 @@ using System.Text.RegularExpressions;
 namespace Textile.States
 {
     [FormatterState(@"^\s*(?<tag>table)" +
-                   Globals.SpanPattern +
-                   Globals.AlignPattern +
-                   Globals.BlockModifiersPattern +
-                   @"\.\s*$")]
+                    TextileGlobals.SpanPattern +
+                    TextileGlobals.AlignPattern +
+                    TextileGlobals.BlockModifiersPattern +
+                    @"\.\s*$")]
 	public class TableFormatterState : FormatterState
 	{
+        private static readonly Regex NextLineRegex = new Regex(@"^\s*" + TextileGlobals.AlignPattern + TextileGlobals.BlockModifiersPattern +
+                                                                   @"(\.\s?)?(?<tag>\|)" +
+                                                                   @"(?<content>.*)(?=\|)");
+
         private string m_attsInfo;
         private string m_alignInfo;
 
-		public TableFormatterState(TextileFormatter f)
-			: base(f)
+		public TableFormatterState()
 		{
 		}
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            m_alignInfo = m.Groups["align"].Value;
-            m_attsInfo = m.Groups["atts"].Value;
+            m_alignInfo = context.Match.Groups["align"].Value;
+            m_attsInfo = context.Match.Groups["atts"].Value;
 
             //TODO: check the state (it could already be a table!)
-            this.Formatter.ChangeState(this);
+            Formatter.ChangeState(this);
 
             return string.Empty;
         }
@@ -53,13 +56,9 @@ namespace Textile.States
 				throw new Exception("The TableFormatter state is not supposed to format any lines!");
 		}
 
-		public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
 		{
-			Match m = Regex.Match(input,
-                                   @"^\s*" + Globals.AlignPattern + Globals.BlockModifiersPattern +
-								   @"(\.\s?)?(?<tag>\|)" +
-								   @"(?<content>.*)(?=\|)"
-								  );
+            Match m = NextLineRegex.Match(input);
 			return( m.Success == false );
 		}
 

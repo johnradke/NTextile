@@ -20,11 +20,10 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(SimpleBlockFormatterState.PatternBegin + @"bq" + SimpleBlockFormatterState.PatternEnd)]
+    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"bq" + SimpleBlockFormatterState.TextilePatternEnd)]
 	public class BlockQuoteFormatterState : SimpleBlockFormatterState
 	{
-        public BlockQuoteFormatterState(TextileFormatter f)
-            : base(f)
+        public BlockQuoteFormatterState()
         {
         }
 
@@ -43,7 +42,7 @@ namespace Textile.States
 			Formatter.Output.Write(input);
 		}
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (Regex.IsMatch(input, @"^\s*$"))
                 return true;

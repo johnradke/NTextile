@@ -10,7 +10,7 @@ namespace Textile.Blocks
         public override string ModifyLine(string line)
         {
             MatchEvaluator me = new MatchEvaluator(CapitalsFormatMatchEvaluator);
-            line = Regex.Replace(line, @"(?<=^|\s|" + Globals.PunctuationPattern + @")(?<caps>[A-Z][A-Z0-9]+)(?=$|\s|" + Globals.PunctuationPattern + @")", me);
+            line = Regex.Replace(line, @"(?<=^|\s|" + TextileGlobals.PunctuationPattern + @")(?<caps>[A-Z][A-Z0-9]+)(?=$|\s|" + TextileGlobals.PunctuationPattern + @")", me);
             return line;
         }
 

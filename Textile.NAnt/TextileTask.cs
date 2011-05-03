@@ -222,8 +222,8 @@ namespace Textile.NAnt
             DirectoryInfo srcBaseInfo = Inputs.BaseDirectory;
 
             #region Configure TextileFormatter
-            StringBuilderTextileFormatter sbtf = new StringBuilderTextileFormatter();
-            TextileFormatter tf = new TextileFormatter(sbtf);
+            StringBuilderOutputter outputter = new StringBuilderOutputter();
+            TextileFormatter tf = new TextileFormatter(outputter);
             tf.FormatFootNotes = this.FormatFootNotes;
             tf.FormatImages = this.FormatImages;
             tf.FormatLinks = this.FormatLinks;
@@ -279,7 +279,7 @@ namespace Textile.NAnt
 
                     Log(Level.Verbose, "Converting textile from file '{0}' to an HTML string...", srcInfo.FullName);
                     tf.Format(inputTextile);
-                    string outputHtml = sbtf.GetFormattedText();
+                    string outputHtml = outputter.GetFormattedText();
 
                     // TODO: make output extension configurable
                     string outputPath = Path.ChangeExtension(dstFilePath, ".html");

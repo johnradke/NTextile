@@ -23,17 +23,18 @@ namespace Textile.States
     /// <summary>
     /// Formatting state for headers and titles.
     /// </summary>
-    [FormatterState(SimpleBlockFormatterState.PatternBegin + @"h[0-9]+" + SimpleBlockFormatterState.PatternEnd)]
+    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"h[0-9]+" + SimpleBlockFormatterState.TextilePatternEnd)]
     public class HeaderFormatterState : SimpleBlockFormatterState
     {
-        int m_headerLevel = 0;
+        private static readonly Regex HeaderRegex = new Regex(@"^h(?<lvl>[0-9]+)");
+
+        private int m_headerLevel = 0;
         public int HeaderLevel
         {
             get { return m_headerLevel; }
         }
-        
-        public HeaderFormatterState(TextileFormatter f)
-            : base(f)
+
+		public HeaderFormatterState()
         {
         }
 
@@ -49,7 +50,7 @@ namespace Textile.States
 
         protected override void OnContextAcquired()
         {
-            Match m = Regex.Match(Tag, @"^h(?<lvl>[0-9]+)");
+            Match m = HeaderRegex.Match(Tag);
             m_headerLevel = Int32.Parse(m.Groups["lvl"].Value);
         }
 
@@ -58,7 +59,7 @@ namespace Textile.States
             Formatter.Output.Write(input);
         }
 
-        public override bool ShouldExit(string intput)
+		public override bool ShouldExit(string intput, string inputLookAhead)
         {
             return true;
         }

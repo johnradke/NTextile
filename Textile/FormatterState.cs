@@ -29,31 +29,34 @@ namespace Textile
     /// each line of text it receives.
     public abstract class FormatterState
     {
-        TextileFormatter m_formatter;
+        private GenericFormatter m_formatter;
         /// <summary>
-        /// The formatter this state belongs to.
+        /// Gets the formatter this state belongs to.
         /// </summary>
-        public TextileFormatter Formatter
+        public GenericFormatter Formatter
         {
             get { return m_formatter; }
+			internal set { m_formatter = value; }
         }
 
         /// <summary>
-        /// Public constructor.
+        /// Gets or sets whether the formatter is enabled.
         /// </summary>
-        /// <param name="f">The parent formatter.</param>
-        public FormatterState(TextileFormatter formatter)
+        public bool IsEnabled { get; set; }
+
+        /// <summary>
+        /// Constructs a new instance of <see cref="FormatterState"/>.
+        /// </summary>
+        protected FormatterState()
         {
-            m_formatter = formatter;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="m"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        public abstract string Consume(string input, Match m);
+        public abstract string Consume(FormatterStateConsumeContext context);
 
         /// <summary>
         /// Method called when the state is entered.
@@ -86,7 +89,7 @@ namespace Textile
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public abstract bool ShouldExit(string input);
+        public abstract bool ShouldExit(string input, string inputLookAhead);
 
         /// <summary>
         /// 

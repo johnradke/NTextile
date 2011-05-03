@@ -32,12 +32,12 @@ namespace Textile.Blocks
                                   @"(\|(?<lang>\w+)\|)?" +        // lang
                                    "(?<code>[^@]+)" +              // code
                                    "@" +
-                                  @"(?<after>$|([\]}])|(?=" + Globals.PunctuationPattern + @"{1,2}|\s|$))",  // after
+                                  @"(?<after>$|([\]}])|(?=" + TextileGlobals.PunctuationPattern + @"{1,2}|\s|$))",  // after
                                 me);
             // Encode the contents of the "<code>" tags so that we don't
             // generate formatting out of it.
             line = NoTextileEncoder.EncodeNoTextileZones(line,
-                                  @"(?<=(^|\s)<code(" + Globals.HtmlAttributesPattern + @")>)",
+                                  @"(?<=(^|\s)<code(" + TextileGlobals.HtmlAttributesPattern + @")>)",
                                   @"(?=</code>)");
             return line;
         }
@@ -46,7 +46,7 @@ namespace Textile.Blocks
         {
             // Recode everything except "<" and ">";
             line = NoTextileEncoder.DecodeNoTextileZones(line,
-                                    @"(?<=(^|\s)<code(" + Globals.HtmlAttributesPattern + @")>)",
+                                    @"(?<=(^|\s)<code(" + TextileGlobals.HtmlAttributesPattern + @")>)",
                                     @"(?=</code>)",
                                     new string[] { "<", ">" });
             return line;

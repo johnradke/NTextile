@@ -29,9 +29,15 @@ namespace Textile
     /// formatted, ready to display HTML string to the
     /// outputter defined in the constructor of the
     /// class.
-    public partial class TextileFormatter
-	{
-        static TextileFormatter()
+    public partial class TextileFormatter : GenericFormatter
+    {
+        /// <summary>
+        /// Public constructor, where the formatter is hooked up
+        /// to an outputter.
+        /// </summary>
+        /// <param name="output">The outputter to be used.</param>
+        public TextileFormatter(IOutputter output)
+            : base(output, typeof(States.ParagraphFormatterState))
         {
             RegisterFormatterState(typeof(HeaderFormatterState));
             RegisterFormatterState(typeof(BlockQuoteFormatterState));
@@ -66,44 +72,7 @@ namespace Textile
             //TODO: capitals block modifier
         }
 
-		/// <summary>
-        /// Public constructor, where the formatter is hooked up
-        /// to an outputter.
-        /// </summary>
-        /// <param name="output">The outputter to be used.</param>
-        public TextileFormatter(IOutputter output)
-        {
-            m_output = output;
-		}
-
-		#region Properties for Output
-
-		private IOutputter m_output = null;
-        /// <summary>
-        /// The ouputter to which the formatted text
-        /// is sent to.
-        /// </summary>
-        public IOutputter Output
-        {
-            get { return m_output; }
-		}
-
-		private int m_headerOffset = 0;
-		/// <summary>
-		/// The offset for the header tags.
-		/// </summary>
-		/// When the formatted text is inserted into another page
-		/// there might be a need to offset all headers (h1 becomes
-		/// h4, for instance). The header offset allows this.
-		public int HeaderOffset
-		{
-			get { return m_headerOffset; }
-			set { m_headerOffset = value; }
-		}
-
-		#endregion
-
-        #region Properties for Conversion
+        #region Properties for Output
 
         public bool FormatImages
         {
@@ -133,28 +102,29 @@ namespace Textile
             set
             {
                 SwitchBlockModifier(typeof(FootNoteReferenceBlockModifier), value);
-                SwitchFormatterState(typeof(FootNoteFormatterState), value);
+                if (value)
+                    RegisterFormatterState(typeof(FootNoteFormatterState));
+                else
+                    UnregisterFormatterState(typeof(FootNoteFormatterState));
             }
         }
 
         public bool FormatTables
         {
-            get { return IsFormatterStateEnabled(typeof(TableFormatterState)); }
+            get { return IsFormatterStateRegistered(typeof(TableFormatterState)); }
             set
             {
-                SwitchFormatterState(typeof(TableFormatterState), value);
-                SwitchFormatterState(typeof(TableRowFormatterState), value);
+                if (value)
+                {
+                    RegisterFormatterState(typeof(TableFormatterState));
+                    RegisterFormatterState(typeof(TableRowFormatterState));
+                }
+                else
+                {
+                    UnregisterFormatterState(typeof(TableFormatterState));
+                    UnregisterFormatterState(typeof(TableRowFormatterState));
+                }
             }
-        }
-
-        string m_rel = string.Empty;
-		/// <summary>
-		/// Attribute to add to all links.
-		/// </summary>
-        public string Rel
-        {
-            get { return m_rel; }
-            set { m_rel = value; }
         }
 
         #endregion
@@ -169,10 +139,10 @@ namespace Textile
         /// <returns>The formatted version of the string</returns>
         public static string FormatString(string input)
         {
-            StringBuilderTextileFormatter s = new StringBuilderTextileFormatter();
-            TextileFormatter f = new TextileFormatter(s);
-            f.Format(input);
-            return s.GetFormattedText();
+			StringBuilderOutputter output = new StringBuilderOutputter();
+			TextileFormatter formatter = new TextileFormatter(output);
+            formatter.Format(input);
+			return output.GetFormattedText();
         }
 
         /// <summary>

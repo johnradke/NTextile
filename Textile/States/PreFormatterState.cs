@@ -5,28 +5,27 @@ using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(@"^\s*<pre" + Globals.HtmlAttributesPattern + ">")]
+    [FormatterState(@"^\s*<pre" + TextileGlobals.HtmlAttributesPattern + ">")]
     public class PreFormatterState : FormatterState
     {
         bool m_shouldExitNextTime = false;
         int m_fakeNestingDepth = 0;
 
-        public PreFormatterState(TextileFormatter f)
-            : base(f)
+        public PreFormatterState()
         {
         }
 
-        public override string Consume(string input, Match m)
+		public override string Consume(FormatterStateConsumeContext context)
         {
-            if (!Regex.IsMatch(input, "</pre>"))
+            if (!Regex.IsMatch(context.Input, "</pre>"))
             {
-                this.Formatter.ChangeState(this);
+                Formatter.ChangeState(this);
             }
             else
             {
-                this.Formatter.ChangeState(new PassthroughFormatterState(this.Formatter));
+                Formatter.ChangeState(new PassthroughFormatterState());
             }
-            return input;
+            return context.Input;
         }
 
         public override bool ShouldNestState(FormatterState other)
@@ -50,7 +49,7 @@ namespace Textile.States
             Formatter.Output.WriteLine(input);
         }
 
-        public override bool ShouldExit(string input)
+		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (m_shouldExitNextTime)
                 return true;

@@ -8,7 +8,14 @@ namespace Textile.States
 {
 	public class TableCellParser
 	{
-		string m_lineFragment;
+        private static readonly Regex CellHeaderRegex = new Regex(@"^((?<head>_?)" +
+                                                                   TextileGlobals.SpanPattern +
+                                                                   TextileGlobals.AlignPattern +
+                                                                   TextileGlobals.BlockModifiersPattern +
+                                                                   @"(?<dot>\.)\s?)?" +
+                                                                   @"(?<content>.*)");
+
+		private string m_lineFragment;
 
 		public TableCellParser(string input)
 		{
@@ -19,14 +26,7 @@ namespace Textile.States
 		{
 			string htmlTag = "td";
 
-			Match m = Regex.Match(m_lineFragment,
-								   @"^((?<head>_?)" +
-								   Globals.SpanPattern +
-								   Globals.AlignPattern +
-								   Globals.BlockModifiersPattern +
-								   @"(?<dot>\.)\s?)?" +
-								   @"(?<content>.*)"
-								  );
+            Match m = CellHeaderRegex.Match(m_lineFragment);
 			if (!m.Success)
 				throw new Exception("Couldn't parse table cell.");
 

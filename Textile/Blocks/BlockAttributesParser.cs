@@ -22,6 +22,17 @@ namespace Textile.Blocks
 {
     public class BlockAttributesParser
     {
+        private static readonly Regex ColumnSpanRegex = new Regex(@"\\(\d+)", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex RowSpanRegex = new Regex(@"/(\d+)", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex VerticalAlignRegex = new Regex(@"(" + TextileGlobals.VerticalAlignPattern + @")", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex CustomStylesRegex = new Regex(@"\{([^}]*)\}", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex LanguageRegex = new Regex(@"\[([^()]+)\]", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex CssClassOrIdRegex = new Regex(@"\(([^()]+)\)", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex CssClassAndIdRegex = new Regex(@"^(.*)#(.*)$", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex PaddingLeftRegex = new Regex(@"([(]+)", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex PaddingRightRegex = new Regex(@"([)]+)", TextileGlobals.BlockModifierRegexOptions);
+        private static readonly Regex TextAlignRegex = new Regex("(" + TextileGlobals.HorizontalAlignPattern + ")", TextileGlobals.BlockModifierRegexOptions);
+
         /// <summary>
         /// 
         /// </summary>
@@ -56,21 +67,21 @@ namespace Textile.Blocks
             if (element == "td")
             {
 				// column span
-                m = Regex.Match(matched, @"\\(\d+)");
+                m = ColumnSpanRegex.Match(matched);
                 if (m.Success)
                     colspan = m.Groups[1].Value;
 				// row span
-                m = Regex.Match(matched, @"/(\d+)");
+                m = RowSpanRegex.Match(matched);
                 if (m.Success)
                     rowspan = m.Groups[1].Value;
 				// vertical align
-                m = Regex.Match(matched, @"(" + Globals.VerticalAlignPattern + @")");
+                m = VerticalAlignRegex.Match(matched);
                 if (m.Success)
-                    style += "vertical-align:" + Globals.VerticalAlign[m.Captures[0].Value] + ";";
+                    style += "vertical-align:" + TextileGlobals.VerticalAlign[m.Captures[0].Value] + ";";
             }
 
             // First, match custom styles
-            m = Regex.Match(matched, @"\{([^}]*)\}");
+            m = CustomStylesRegex.Match(matched);
             if (m.Success)
             {
                 style += m.Groups[1].Value + ";";
@@ -78,7 +89,7 @@ namespace Textile.Blocks
             }
 
             // Then match the language
-            m = Regex.Match(matched, @"\[([^()]+)\]");
+            m = LanguageRegex.Match(matched);
             if (m.Success)
             {
                 lang = m.Groups[1].Value;
@@ -86,14 +97,14 @@ namespace Textile.Blocks
             }
 
             // Match classes and IDs after that
-            m = Regex.Match(matched, @"\(([^()]+)\)");
+            m = CssClassOrIdRegex.Match(matched);
             if (m.Success)
             {
                 cssClass = m.Groups[1].Value;
                 matched = matched.Replace(m.ToString(), "");
 
                 // Separate the public class and the ID
-                m = Regex.Match(cssClass, @"^(.*)#(.*)$");
+                m = CssClassAndIdRegex.Match(cssClass);
                 if (m.Success)
                 {
                     cssClass = m.Groups[1].Value;
@@ -102,7 +113,7 @@ namespace Textile.Blocks
             }
 
             // Get the padding on the left
-            m = Regex.Match(matched, @"([(]+)");
+            m = PaddingLeftRegex.Match(matched);
             if (m.Success)
             {
                 style += "padding-left:" + m.Groups[1].Length + "em;";
@@ -110,7 +121,7 @@ namespace Textile.Blocks
             }
 
             // Get the padding on the right
-            m = Regex.Match(matched, @"([)]+)");
+            m = PaddingRightRegex.Match(matched);
             if (m.Success)
             {
                 style += "padding-right:" + m.Groups[1].Length + "em;";
@@ -118,9 +129,9 @@ namespace Textile.Blocks
             }
 
             // Get the text alignment
-            m = Regex.Match(matched, "(" + Globals.HorizontalAlignPattern + ")");
+            m = TextAlignRegex.Match(matched);
             if (m.Success)
-                style += "text-align:" + Globals.HorizontalAlign[m.Groups[1].Value] + ";";
+                style += "text-align:" + TextileGlobals.HorizontalAlign[m.Groups[1].Value] + ";";
 
             return (
                     (style.Length > 0 ? " style=\"" + style + "\"" : "") +
