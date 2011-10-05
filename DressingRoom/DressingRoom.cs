@@ -29,7 +29,7 @@ namespace DressingRoom
 	public partial class DressingRoom : Form
 	{
 		Textile.TextileFormatter m_textileFormatter = null;
-		StringBuilderTextileFormatter m_textileOutput = null;
+		Textile.StringBuilderOutputter m_textileOutput = null;
 		string m_currentTextFile = null;
 		HtmlElement m_bodyElement = null;
 		string m_cachedHtml = null;
@@ -44,7 +44,7 @@ namespace DressingRoom
 		{
 			InitializeComponent();
 
-			m_textileOutput = new StringBuilderTextileFormatter();
+            m_textileOutput = new Textile.StringBuilderOutputter();
 			m_textileFormatter = new Textile.TextileFormatter(m_textileOutput);
 
 			System.Reflection.Assembly thisExe = System.Reflection.Assembly.GetExecutingAssembly();
