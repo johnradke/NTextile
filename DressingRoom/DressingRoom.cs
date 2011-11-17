@@ -85,10 +85,28 @@ namespace DressingRoom
             m_textInput.Selection.BackColor = Color.FromArgb(224, 224, 224);
             m_textInput.Selection.BackColorUnfocused = Color.FromArgb(240, 240, 240);
             ni.SetWrapMode((int)WrapMode.Word);
-
+			SetWrapAwareHomeEndKeys();
 			// disable links, since we operate on the assumption we can simply substitute the contents of <body>
 			m_webBrowser.AllowNavigation = false;
 			UpdateWindowTitle();
+		}
+
+		public delegate void Action<T1, T2, T3> (T1 arg1, T2 arg2, T3 arg3);
+
+		private void SetWrapAwareHomeEndKeys ()
+		{
+			var commands = m_textInput.Commands;
+			var setBinding = new Action<Keys, Keys, BindableCommand> ((key, mod, command) =>
+				{
+					commands.RemoveBinding(key, mod);
+					commands.AddBinding(key, mod, command);
+				}
+			);
+			setBinding (Keys.Home, Keys.None, BindableCommand.VCHomeWrap);
+			setBinding (Keys.Home, Keys.Shift, BindableCommand.VCHomeWrapExtend);
+			setBinding (Keys.Home, Keys.Shift | Keys.Alt, BindableCommand.VCHomeRectExtend);
+			setBinding (Keys.End, Keys.None, BindableCommand.LineEndWrap);
+			setBinding (Keys.End, Keys.Shift, BindableCommand.LineEndWrapExtend);
 		}
 
 		public DressingRoom(string path)
