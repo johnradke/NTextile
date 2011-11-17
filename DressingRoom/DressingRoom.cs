@@ -33,6 +33,7 @@ namespace DressingRoom
 		string m_currentTextFile = null;
 		HtmlElement m_bodyElement = null;
 		string m_cachedHtml = null;
+		string m_cachedBaseHref = null;
 	    string m_searchText = null;
 
         internal static int Colour(byte red, byte green, byte blue)
@@ -69,6 +70,7 @@ namespace DressingRoom
 
 			m_webBrowser.DocumentText = String.Format(@"<html>
 	<head>
+		<base id='base' />
 		<style>
 			{0}
 		</style>
@@ -177,10 +179,32 @@ namespace DressingRoom
 					m_textInput.Text = rdr.ReadToEnd();
                     UpdateCursorPosition();
 				}
+				UpdateBaseHref();
 				DoTextileToHtml();
 				m_textInput.Modified = false;
 				UpdateWindowTitle();
 			}
+		}
+
+		internal void UpdateBaseHref()
+		{
+			m_cachedBaseHref = new Uri(Path.GetDirectoryName(m_currentTextFile) + "/").ToString();
+			var baseElement = m_webBrowser.Document.GetElementById("base");
+			if (baseElement == null)
+			{
+				// the browser was not ready for us yet
+				m_webBrowser.DocumentCompleted += DocumentCompleted_UpdateBaseHref;
+			}
+			else
+			{
+				baseElement.SetAttribute("href", m_cachedBaseHref);
+			}
+		}
+
+		void DocumentCompleted_UpdateBaseHref(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			var baseElement = m_webBrowser.Document.GetElementById("base");
+			baseElement.SetAttribute("href", m_cachedBaseHref);
 		}
 
 		private void OnFileSaveClick(object sender, EventArgs e)
@@ -222,6 +246,7 @@ namespace DressingRoom
 			{
 				wtr.Write(m_textInput.Text);
 			}
+			UpdateBaseHref();
 			m_textInput.Modified = false;
 			UpdateWindowTitle();
 		}
