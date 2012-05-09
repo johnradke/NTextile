@@ -61,7 +61,7 @@ namespace Textile.States
             {
                 string cellInput = cellsInput[i];
                 TableCellParser tcp = new TableCellParser(cellInput);
-                formattedLine += tcp.GetLineFragmentFormatting();
+                formattedLine += tcp.GetLineFragmentFormatting(UseRestrictedMode);
             }
 
             Formatter.Output.WriteLine(formattedLine);
@@ -74,7 +74,7 @@ namespace Textile.States
 
         protected string FormattedStylesAndAlignment()
         {
-            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignInfo + m_attsInfo);
+            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignInfo + m_attsInfo, UseRestrictedMode);
         }
     }
 }

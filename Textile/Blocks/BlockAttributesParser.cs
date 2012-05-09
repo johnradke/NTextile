@@ -51,6 +51,29 @@ namespace Textile.Blocks
         /// <returns></returns>
         static public string ParseBlockAttributes(string input, string element)
         {
+            return ParseBlockAttributes(input, element, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="restrictedMode"></param>
+        /// <returns></returns>
+        static public string ParseBlockAttributes(string input, bool restrictedMode)
+        {
+            return ParseBlockAttributes(input, "", restrictedMode);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="element"></param>
+        /// <param name="restrictedMode"></param>
+        /// <returns></returns>
+        static public string ParseBlockAttributes(string input, string element, bool restrictedMode)
+        {
             if (input.Length == 0)
                 return string.Empty;
 
@@ -94,6 +117,13 @@ namespace Textile.Blocks
             {
                 lang = m.Groups[1].Value;
                 matched = matched.Replace(m.ToString(), "");
+            }
+
+            // If we're in restricted mode, stop here and only return the language. Anything
+            // else is disabled.
+            if (restrictedMode)
+            {
+                return (lang.Length > 0 ? " lang=\"" + lang + "\"" : "");
             }
 
             // Match classes and IDs after that

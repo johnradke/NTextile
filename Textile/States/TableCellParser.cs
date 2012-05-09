@@ -22,7 +22,7 @@ namespace Textile.States
 			m_lineFragment = input;
 		}
 
-		public string GetLineFragmentFormatting()
+		public string GetLineFragmentFormatting(bool restrictedMode)
 		{
 			string htmlTag = "td";
 
@@ -35,7 +35,7 @@ namespace Textile.States
             //string opts = BlockAttributesParser.ParseBlockAttributes(m.Groups["span"].Value, "td") +
             //              BlockAttributesParser.ParseBlockAttributes(m.Groups["align"].Value, "td") +
             //              BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "td");
-            string opts = Blocks.BlockAttributesParser.ParseBlockAttributes(m.Groups["span"].Value + m.Groups["align"].Value + m.Groups["atts"].Value, "td");
+            string opts = Blocks.BlockAttributesParser.ParseBlockAttributes(m.Groups["span"].Value + m.Groups["align"].Value + m.Groups["atts"].Value, "td", restrictedMode);
 
 			string res = "<" + htmlTag + opts + ">";
             // It may be possible the user actually intended to have a dot at the beginning of

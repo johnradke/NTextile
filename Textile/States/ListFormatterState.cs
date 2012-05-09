@@ -137,7 +137,7 @@ namespace Textile.States
 
         protected string FormattedStylesAndAlignment()
         {
-            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignInfo + m_attsInfo);
+            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignInfo + m_attsInfo, UseRestrictedMode);
         }
     }
 }

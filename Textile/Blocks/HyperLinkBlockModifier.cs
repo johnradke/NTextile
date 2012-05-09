@@ -45,16 +45,20 @@ namespace Textile.Blocks
         private string HyperLinksFormatMatchEvaluator(Match m)
         {
             //TODO: check the URL
-            string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "");
+            string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", UseRestrictedMode);
             if (m.Groups["title"].Length > 0)
                 atts += " title=\"" + m.Groups["title"].Value + "\"";
             string linkText = m.Groups["text"].Value.Trim(' ');
 
+            // Validate the URL.
+            string url = TextileGlobals.EncodeHTMLLink(m.Groups["url"].Value) + m.Groups["slash"].Value;
+            if (url.Contains("\"")) // Disable the URL if someone's trying a cheap hack.
+                url = "#";
+
             string str = m.Groups["pre"].Value + "<a ";
 			if (m_rel != null && m_rel != string.Empty)
 				str += "ref=\"" + m_rel + "\" ";
-			str += "href=\"" +
-				  TextileGlobals.EncodeHTMLLink(m.Groups["url"].Value) + m.Groups["slash"].Value + "\"" +
+			str += "href=\"" + url + "\"" +
 				  atts +
 				  ">" + linkText + "</a>" + m.Groups["post"].Value;
             return str;

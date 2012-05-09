@@ -41,9 +41,9 @@ namespace Textile.Blocks
             return line;
         }
 
-        static string ImageFormatMatchEvaluator(Match m)
+        private string ImageFormatMatchEvaluator(Match m)
         {
-            string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "");
+            string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", UseRestrictedMode);
             if (m.Groups["algn"].Length > 0)
                 atts += " align=\"" + TextileGlobals.ImageAlign[m.Groups["algn"].Value] + "\"";
             if (m.Groups["title"].Length > 0)
@@ -57,7 +57,12 @@ namespace Textile.Blocks
             }
             // Get Image Size?
 
-            string res = "<img src=\"" + m.Groups["url"].Value + "\"" + atts + " />";
+            // Validate the URL.
+            string url = m.Groups["url"].Value;
+            if (url.Contains("\"")) // Disable the URL if someone's trying a cheap hack.
+                url = "#";
+
+            string res = "<img src=\"" + url + "\"" + atts + " />";
 
             if (m.Groups["href"].Length > 0)
             {

@@ -10,6 +10,21 @@ namespace Textile
     public abstract class BlockModifier
     {
         /// <summary>
+        /// A convenience property to get whether the owner <see cref="GenericFormatter"/>
+        /// has the 'restrcted' mode turned on. If there is no owning formatter, 
+        /// return false.
+        /// </summary>
+        protected bool UseRestrictedMode
+        {
+            get
+            {
+                if (m_formatter != null)
+                    return m_formatter.UseRestrictedMode;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets whether this block modifier is enabled.
         /// </summary>
         public bool IsEnabled { get; set; }

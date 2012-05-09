@@ -29,6 +29,21 @@ namespace Textile
     /// each line of text it receives.
     public abstract class FormatterState
     {
+        /// <summary>
+        /// A convenience property to get whether the owner <see cref="GenericFormatter"/>
+        /// has the 'restrcted' mode turned on. If there is no owning formatter, 
+        /// return false.
+        /// </summary>
+        protected bool UseRestrictedMode
+        {
+            get
+            {
+                if (m_formatter != null)
+                    return m_formatter.UseRestrictedMode;
+                return false;
+            }
+        }
+
         private GenericFormatter m_formatter;
         /// <summary>
         /// Gets the formatter this state belongs to.

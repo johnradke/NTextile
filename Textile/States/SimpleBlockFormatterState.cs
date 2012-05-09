@@ -64,17 +64,17 @@ namespace Textile.States
         /// <returns></returns>
         protected string FormattedAlignment()
         {
-            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignNfo);
+            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignNfo, UseRestrictedMode);
         }
 
         protected string FormattedStyles()
         {
-            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_attNfo);
+            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_attNfo, UseRestrictedMode);
         }
 
         protected string FormattedStylesAndAlignment()
         {
-            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignNfo + m_attNfo);
+            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignNfo + m_attNfo, UseRestrictedMode);
         }
     }
 }

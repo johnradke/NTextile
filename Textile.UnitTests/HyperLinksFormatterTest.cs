@@ -67,5 +67,17 @@ namespace Textile.UnitTests
 
 			Assert.AreEqual(expected, actual);
 		}
+
+        [Test]
+        public void HyperLinksFormatTestCheapHack()
+        {
+            string input = "\"A cheap hack\":http://example.org\"/style=\"attack";
+            string expected = "<a href=\"#\">A cheap hack</a>";
+
+            HyperLinkBlockModifier f = new HyperLinkBlockModifier();
+            string actual = f.ModifyLine(input);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

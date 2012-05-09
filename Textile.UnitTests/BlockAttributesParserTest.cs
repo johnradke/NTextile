@@ -163,5 +163,41 @@ namespace Textile.UnitTests
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void ParseBlockAttributesRestricted1()
+        {
+            string input = "[fr]";
+            string element = "";
+
+            string expected = " lang=\"fr\"";
+            string actual = BlockAttributesParser.ParseBlockAttributes(input, element, true);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ParseBlockAttributesRestricted2()
+        {
+            string element = "";
+
+            string input = "()>[no]{color:red}";
+            string expected = " lang=\"no\"";
+            string actual = BlockAttributesParser.ParseBlockAttributes(input, element, true);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ParseBlockAttributesRestricted3()
+        {
+            string element = "";
+
+            string input = "()>{color:red}";
+            string expected = "";
+            string actual = BlockAttributesParser.ParseBlockAttributes(input, element, true);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

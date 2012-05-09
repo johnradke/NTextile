@@ -61,7 +61,7 @@ namespace Textile.Blocks
 
         protected string PhraseModifierFormat(string input, Regex regex, string tag)
         {
-            PhraseModifierMatchEvaluator pmme = new PhraseModifierMatchEvaluator(tag);
+            PhraseModifierMatchEvaluator pmme = new PhraseModifierMatchEvaluator(tag, UseRestrictedMode);
             string res = regex.Replace(input, new MatchEvaluator(pmme.MatchEvaluator));
             return res;
         }
@@ -69,10 +69,12 @@ namespace Textile.Blocks
         private class PhraseModifierMatchEvaluator
         {
             string m_tag;
+            bool m_restrictedMode;
 
-            public PhraseModifierMatchEvaluator(string tag)
+            public PhraseModifierMatchEvaluator(string tag, bool restrictedMode)
             {
                 m_tag = tag;
+                m_restrictedMode = restrictedMode;
             }
 
             public string MatchEvaluator(Match m)
@@ -87,7 +89,7 @@ namespace Textile.Blocks
                     return "<" + m_tag + ">" + m.Groups["atts"].Value + m.Groups["end"].Value + "</" + m_tag + ">";
                 }
 
-                string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "");
+                string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", m_restrictedMode);
                 if (m.Groups["cite"].Length > 0)
                     atts += " cite=\"" + m.Groups["cite"] + "\"";
 

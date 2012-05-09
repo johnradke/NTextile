@@ -95,5 +95,17 @@ namespace Textile.UnitTests
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void ImagesFormatTestCheapHack()
+        {
+            string tmp = "!http://foo.com/fake.png\"/style=\"xss!";
+            string expected = "<img src=\"#\" alt=\"\" />";
+
+            ImageBlockModifier f = new ImageBlockModifier();
+            string actual = f.ModifyLine(tmp);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

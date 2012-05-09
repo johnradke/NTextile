@@ -56,6 +56,16 @@ namespace Textile
             set { m_rel = value; }
         }
 
+        private bool mUseRestrictedMode = false;
+        /// <summary>
+        /// Gets or sets the 'restricted' mode where formatting features are limited.
+        /// </summary>
+        public bool UseRestrictedMode
+        {
+            get { return mUseRestrictedMode; }
+            set { mUseRestrictedMode = true; }
+        }
+
         #endregion
 
 		#region Processor Modifiers Management
