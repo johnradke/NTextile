@@ -9,6 +9,7 @@ namespace Textile.States
     {
         internal const string TextilePatternBegin = @"^\s*(?<tag>";
         internal const string TextilePatternEnd = @")" + TextileGlobals.AlignPattern + TextileGlobals.BlockModifiersPattern + @"\.(?:\s+)?(?<content>.*)$";
+        internal const string TextileDoubleDotPatternEnd = @")" + TextileGlobals.AlignPattern + TextileGlobals.BlockModifiersPattern + @"\.(?<ddot>\.)?(?:\s+)?(?<content>.*)$";
 
         private string m_tag = null;
         public string Tag

@@ -1,0 +1,32 @@
+﻿---
+in: some stuff in *bold*.
+out: <p>some stuff in <strong>bold</strong>.</p>
+---
+in: some stuff in bold (*here*).
+out: <p>some stuff in bold (<strong>here</strong>).</p>
+---
+in: some super*complex*stuff in *bold*.
+out: <p>some super*complex*stuff in <strong>bold</strong>.</p>
+---
+in: |-
+  bq. Some quote
+  Rest of the quote
+
+  Normal stuff.
+out: |-
+  <blockquote><p>Some quote<br />
+  Rest of the quote</p></blockquote>
+
+  <p>Normal stuff.</p>
+---
+in: |-
+  bq.. Some quote
+
+  Rest of the quote
+
+  p. Normal stuff.
+out: |-
+  <blockquote><p>Some quote</p>
+  <p>Rest of the quote</p></blockquote>
+
+  <p>Normal stuff.</p>

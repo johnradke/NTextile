@@ -136,6 +136,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="TestData\blockquote.yml" />
+    <None Include="TestData\blocks.yml" />
     <None Include="TestData\code.yml" />
     <None Include="TestData\hard_breaks.yml" />
     <None Include="TestData\html.yml" />
