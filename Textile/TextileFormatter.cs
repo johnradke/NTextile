@@ -50,6 +50,7 @@ namespace Textile
             RegisterFormatterState(typeof(CodeFormatterState));
             RegisterFormatterState(typeof(PreFormatterState));
             RegisterFormatterState(typeof(PreCodeFormatterState));
+            RegisterFormatterState(typeof(PreBlockFormatterState));
             RegisterFormatterState(typeof(NoTextileFormatterState));
 
             RegisterBlockModifier(new NoTextileBlockModifier());

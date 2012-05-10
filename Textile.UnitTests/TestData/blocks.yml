@@ -30,3 +30,21 @@ out: |-
   <p>Rest of the quote</p></blockquote>
 
   <p>Normal stuff.</p>
+---
+in: |-
+  pre. Pre-formatted text.
+  
+  Normal text.
+out: |-
+  <pre>Pre-formatted text.</pre>
+  <p>Normal text.</p>
+---
+in: |-
+  pre. Pre-formatted text.
+  More of this.
+  
+  Normal text.
+out: |-
+  <pre>Pre-formatted text.
+  More of this.</pre>
+  <p>Normal text.</p>
