@@ -141,6 +141,16 @@ namespace Textile
         }
 
         /// <summary>
+        /// Returns whether post-processors should be applied to this line.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public virtual bool ShouldPostProcess(string input)
+        {
+            return true;
+        }
+
+        /// <summary>
         /// Gets the formatting state we should fallback to if we don't find anything
         /// relevant in a line of text.
         /// </summary>

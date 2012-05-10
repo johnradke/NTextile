@@ -301,7 +301,10 @@ namespace Textile
 			// ...run pre-processing on it...
 			foreach (ProcessorModifier modifier in m_processorModifiers)
 			{
-				str = modifier.PreProcess(str);
+                if (modifier.IsEnabled)
+                {
+                    str = modifier.PreProcess(str);
+                }
 			}
             // ...and format each line.
             string[] lines = str.Split('\n');
@@ -329,29 +332,14 @@ namespace Textile
                     // Modify the line with our block modifiers.
                     if (CurrentState == null || CurrentState.ShouldFormatBlocks(tmp))
                     {
-                        foreach (BlockModifier blockModifier in m_blockModifiers)
-                        {
-                            if (blockModifier.IsEnabled)
-                            {
-                                tmp = blockModifier.ModifyLine(tmp);
-                            }
-                        }
-
-                        for (int j = m_blockModifiers.Count - 1; j >= 0; j--)
-                        {
-                            BlockModifier blockModifier = m_blockModifiers[j];
-                            if (blockModifier.IsEnabled)
-                            {
-                                tmp = blockModifier.Conclude(tmp);
-                            }
-                        }
+                        tmp = ApplyBlockModifiers(tmp);
                     }
 
 					// Post-process the line.
-					foreach (ProcessorModifier modifier in m_processorModifiers)
-					{
-						tmp = modifier.PostProcessLine(tmp);
-					}
+                    if (CurrentState == null || CurrentState.ShouldPostProcess(tmp))
+                    {
+                        tmp = ApplyPostProcessors(tmp);
+                    }
 
                     // Format the current line.
                     CurrentState.FormatLine(tmp);
@@ -365,6 +353,49 @@ namespace Textile
                 PopState();
 
             m_output.End();
+        }
+
+        /// <summary>
+        /// Applies the currently enabled block modifiers to a string.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public string ApplyBlockModifiers(string str)
+        {
+            foreach (BlockModifier blockModifier in m_blockModifiers)
+            {
+                if (blockModifier.IsEnabled)
+                {
+                    str = blockModifier.ModifyLine(str);
+                }
+            }
+
+            for (int j = m_blockModifiers.Count - 1; j >= 0; j--)
+            {
+                BlockModifier blockModifier = m_blockModifiers[j];
+                if (blockModifier.IsEnabled)
+                {
+                    str = blockModifier.Conclude(str);
+                }
+            }
+            return str;
+        }
+
+        /// <summary>
+        /// Applies the currently enabled post-processors to a string.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public string ApplyPostProcessors(string str)
+        {
+            foreach (ProcessorModifier modifier in m_processorModifiers)
+            {
+                if (modifier.IsEnabled)
+                {
+                    str = modifier.PostProcessLine(str);
+                }
+            }
+            return str;
         }
 
         #endregion
@@ -400,6 +431,67 @@ namespace Textile
         #region State Handling
 
         /// <summary>
+        /// Gets whether the current line has a candidate formatter state, i.e. a formatter
+        /// state that may be applied.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="inputLookAhead"></param>
+        /// <returns></returns>
+        public bool HasCandidateFormatterStateType(string input, string inputLookAhead)
+        {
+            Match m, m2;
+            return GetCandidateFormatterStateType(input, inputLookAhead, out m, out m2) != null;
+        }
+
+        /// <summary>
+        /// Gets the type of a candidate formatter state for the given input and look-ahead input.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="inputLookAhead"></param>
+        /// <param name="match"></param>
+        /// <param name="lookAheadMatch"></param>
+        /// <returns></returns>
+        public Type GetCandidateFormatterStateType(string input, string inputLookAhead, out Match match, out Match lookAheadMatch)
+        {
+            for (int i = 0; i < m_formatterStates.Count; i++)
+            {
+                Type type = m_formatterStates[i];
+                FormatterStateAttribute attribute = m_formatterStateAttributes[i];
+
+                // Match the current line.
+                Match m = null;
+                if (attribute.Regex != null)
+                {
+                    m = attribute.Regex.Match(input);
+                }
+                if (m == null || m.Success)
+                {
+                    // If the current line matches, optionally match
+                    // the next line (if that formatter state needs the look-ahead
+                    // line to know if it's a candidate).
+                    Match m2 = null;
+                    if (attribute.LookAheadRegex != null)
+                    {
+                        if (string.IsNullOrEmpty(inputLookAhead))   // This could be null if we're processing the last line.
+                            continue;
+                        m2 = attribute.LookAheadRegex.Match(inputLookAhead);
+                        if (!m2.Success)
+                            continue;
+                    }
+
+                    // Seems good!
+                    match = m;
+                    lookAheadMatch = m2;
+                    return type;
+                }
+            }
+
+            match = null;
+            lookAheadMatch = null;
+            return null;
+        }
+
+        /// <summary>
         /// Parses the string and updates the state accordingly.
         /// </summary>
         /// <param name="input">The text to process.</param>
@@ -409,31 +501,18 @@ namespace Textile
         /// their own syntax and remove it?
         private string HandleFormattingState(string input, string inputLookAhead)
         {
-            for (int i = 0; i < m_formatterStates.Count; i++)
+            // Find an appropriate formatter state.
+            Match match;
+            Match lookAheadMatch;
+            Type type = GetCandidateFormatterStateType(input, inputLookAhead, out match, out lookAheadMatch);
+            
+            // Got it! Apply it.
+            if (type != null)
             {
-                Type type = m_formatterStates[i];
-                FormatterStateAttribute attribute = m_formatterStateAttributes[i];
-				Match m = null;
-				if (attribute.Regex != null)
-				{
-					m = attribute.Regex.Match(input);
-				}
-                if (m == null || m.Success)
-                {
-                    Match m2 = null;
-					if (attribute.LookAheadRegex != null)
-                    {
-                        if (string.IsNullOrEmpty(inputLookAhead))   // This could be null if we're processing the last line.
-                            continue;
-						m2 = attribute.LookAheadRegex.Match(inputLookAhead);
-                        if (!m2.Success)
-                            continue;
-                    }
-                    FormatterState formatterState = (FormatterState)Activator.CreateInstance(type);
-					formatterState.Formatter = this;
-					FormatterStateConsumeContext context = new FormatterStateConsumeContext(input, inputLookAhead, m, m2);
-                    return formatterState.Consume(context);    // This may or may not change the current state.
-                }
+                FormatterState formatterState = (FormatterState)Activator.CreateInstance(type);
+                formatterState.Formatter = this;
+                FormatterStateConsumeContext context = new FormatterStateConsumeContext(input, inputLookAhead, match, lookAheadMatch);
+                return formatterState.Consume(context);    // This may or may not change the current state.
             }
 
             // Default, when no block is specified, we ask the current state, or
