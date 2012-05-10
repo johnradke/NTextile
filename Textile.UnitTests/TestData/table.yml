@@ -211,3 +211,21 @@ out: |-
   			<td>System testing complete. Begin testing with live customer data.</td>
   		</tr>
   	</table>
+---
+in: |-
+  | *a title in a table* |
+out: |-
+  <table>
+		<tr>
+			<td> <strong>a title in a table</strong> </td>
+		</tr>
+  </table>
+---
+in: |-
+  |*a title in a table*|
+out: |-
+  <table>
+		<tr>
+			<td><strong>a title in a table</strong></td>
+		</tr>
+  </table>

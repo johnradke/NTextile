@@ -40,6 +40,18 @@ namespace Textile.States
             return false;
         }
 
+        public override bool ShouldFormatBlocks(string input)
+        {
+            // We'll format each cell separately.
+            return false;
+        }
+
+        public override bool ShouldPostProcess(string input)
+        {
+            // We'll post-process each cell separately.
+            return false;
+        }
+
         public override void Enter()
         {
             Formatter.Output.WriteLine("<tr" + FormattedStylesAndAlignment() + ">");
@@ -60,7 +72,7 @@ namespace Textile.States
             for (int i = 1; i < cellsInput.Length - 1; i++)
             {
                 string cellInput = cellsInput[i];
-                TableCellParser tcp = new TableCellParser(cellInput);
+                TableCellParser tcp = new TableCellParser(cellInput, Formatter);
                 formattedLine += tcp.GetLineFragmentFormatting(UseRestrictedMode);
             }
 

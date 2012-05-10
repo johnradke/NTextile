@@ -16,25 +16,30 @@ namespace Textile.States
                                                                    @"(?<content>.*)");
 
 		private string m_lineFragment;
+        private GenericFormatter m_formatter;
 
-		public TableCellParser(string input)
+		public TableCellParser(string input, GenericFormatter formatter)
 		{
 			m_lineFragment = input;
+            m_formatter = formatter;
 		}
 
 		public string GetLineFragmentFormatting(bool restrictedMode)
 		{
-			string htmlTag = "td";
-
-            Match m = CellHeaderRegex.Match(m_lineFragment);
+			Match m = CellHeaderRegex.Match(m_lineFragment);
 			if (!m.Success)
 				throw new Exception("Couldn't parse table cell.");
 
+            string content = m.Groups["content"].Value;
+            // Format/post-process the content of the cell.
+            content = m_formatter.ApplyBlockModifiers(content);
+            content = m_formatter.ApplyPostProcessors(content);
+
+            // Figure out the HTML tag to use for the cell.
+            string htmlTag = "td";
 			if (m.Groups["head"].Value == "_")
 				htmlTag = "th";
-            //string opts = BlockAttributesParser.ParseBlockAttributes(m.Groups["span"].Value, "td") +
-            //              BlockAttributesParser.ParseBlockAttributes(m.Groups["align"].Value, "td") +
-            //              BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "td");
+
             string opts = Blocks.BlockAttributesParser.ParseBlockAttributes(m.Groups["span"].Value + m.Groups["align"].Value + m.Groups["atts"].Value, "td", restrictedMode);
 
 			string res = "<" + htmlTag + opts + ">";
@@ -42,7 +47,7 @@ namespace Textile.States
             // this cell's text, without any formatting (header tag or options).
             if (string.IsNullOrEmpty(opts) && htmlTag == "td" && !string.IsNullOrEmpty(m.Groups["dot"].Value))
                 res += ".";
-			res += m.Groups["content"].Value;
+			res += content;
 			res += "</" + htmlTag + ">";
 
 			return res;
