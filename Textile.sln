@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Textile", "Textile\Textile.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Textile.NAnt", "Textile.NAnt\Textile.NAnt.csproj", "{660CE519-1A24-4D84-A748-8BDEB84E76E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dresser", "Dresser\Dresser.csproj", "{01930955-0532-4316-B95E-21E1D816F53D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{660CE519-1A24-4D84-A748-8BDEB84E76E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{660CE519-1A24-4D84-A748-8BDEB84E76E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{660CE519-1A24-4D84-A748-8BDEB84E76E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01930955-0532-4316-B95E-21E1D816F53D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01930955-0532-4316-B95E-21E1D816F53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01930955-0532-4316-B95E-21E1D816F53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01930955-0532-4316-B95E-21E1D816F53D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
