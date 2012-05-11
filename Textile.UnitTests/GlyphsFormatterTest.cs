@@ -153,6 +153,18 @@ namespace Textile.UnitTests
         }
 
         [Test]
+        public void GlyphFormatTestCopyrightAtBeginningOfLine()
+        {
+            string text = "(c) Company";
+            string expected = "&#169; Company";
+
+            GlyphBlockModifier f = new GlyphBlockModifier();
+            string actual = f.ModifyLine(text);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
         public void GlyphsFormatTestMultipleGlyphs()
         {
             string text = "\"'I swear, captain,' replied I.\"";

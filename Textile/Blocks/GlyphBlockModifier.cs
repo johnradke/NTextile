@@ -37,9 +37,9 @@ namespace Textile.Blocks
                                     { @"(\s)?--(\s)?", "$1&#8212;$2" },                                     //  em dash
                                     { @"\s-(?:\s|$)", " &#8211; " },                                        //  en dash
                                     { @"(\d+)( ?)x( ?)(?=\d+)", "$1$2&#215;$3" },                           //  dimension sign
-                                    { @"\b ?[([](TM|tm)[])]", "&#8482;" },                                  //  trademark
-                                    { @"\b ?[([](R|r)[])]", "&#174;" },                                     //  registered
-                                    { @"\b ?[([](C|c)[])]", "&#169;" }                                      //  copyright
+                                    { @"(?:^|\b) ?[([](TM|tm)[])]", "&#8482;" },                                  //  trademark
+                                    { @"(?:^|\b) ?[([](R|r)[])]", "&#174;" },                                     //  registered
+                                    { @"(?:^|\b) ?[([](C|c)[])]", "&#169;" }                                      //  copyright
                               };
 
             string output = "";
