@@ -24,27 +24,27 @@ namespace Textile.Blocks
     {
         public override string ModifyLine(string line)
         {
-            line = Regex.Replace(line, "\"\\z", "\" ");
-
-            // fix: hackish
+            string punc = TextileGlobals.PunctuationPattern;
             string[,] glyphs = {
-                                { @"([^\s[{(>_*])?\'(?(1)|(\s|s\b|" + TextileGlobals.PunctuationPattern + @"))", "$1&#8217;$2" },    //  single closing
-                                { @"\'", "&#8216;" },                                                   //  single opening
-                                { @"([^\s[{(>_*])?""(?(1)|(\s|" + TextileGlobals.PunctuationPattern + @"))", "$1&#8221;$2" },        //  double closing
-                                { @"""", "&#8220;" },                                                   //  double opening
-                                { @"\b( )?\.{3}", "$1&#8230;" },                                        //  ellipsis
-                                { @"\b([A-Z][A-Z0-9]{2,})\b(?:[(]([^)]*)[)])", "<acronym title=\"$2\">$1</acronym>" },        //  3+ uppercase acronym
-                                { @"(\s)?--(\s)?", "$1&#8212;$2" },                                     //  em dash
-                                { @"\s-\s", " &#8211; " },                                              //  en dash
-                                { @"(\d+)( )?x( )?(\d+)", "$1$2&#215;$3$4" },                           //  dimension sign
-                                { @"\b ?[([](TM|tm)[])]", "&#8482;" },                                  //  trademark
-                                { @"\b ?[([](R|r)[])]", "&#174;" },                                     //  registered
-                                { @"\b ?[([](C|c)[])]", "&#169;" }                                      //  copyright
+                                    { @"(\w)\'(\w)", "$1&#8217;$2" },                                       // apostrophe
+                                    { @"(\s)\'(\d+\w?)\b(?!\')", "$1&#8217;$2" },                           // years ("back in '88")
+                                    { @"(\S)\'(?=\s|" + punc + @"|<|$)", "$1&#8217;" },                     //  single closing
+                                    { @"\'", "&#8216;" },                                                   //  single opening
+                                    { @"(\S)""(?=\s|" + punc + @"|<|$)", "$1&#8221;" },                     //  double closing
+                                    { @"""", "&#8220;" },                                                   //  double opening
+                                    { @"\b([A-Z][A-Z0-9]{2,})\b(?:[(]([^)]*)[)])", "<acronym title=\"$2\">$1</acronym>" },// 3+ uppercase acronym
+                                    { @"\b( )?\.{3}", "$1&#8230;" },                                        //  ellipsis
+                                    { @"(\s)?--(\s)?", "$1&#8212;$2" },                                     //  em dash
+                                    { @"\s-(?:\s|$)", " &#8211; " },                                        //  en dash
+                                    { @"(\d+)( ?)x( ?)(?=\d+)", "$1$2&#215;$3" },                           //  dimension sign
+                                    { @"\b ?[([](TM|tm)[])]", "&#8482;" },                                  //  trademark
+                                    { @"\b ?[([](R|r)[])]", "&#174;" },                                     //  registered
+                                    { @"\b ?[([](C|c)[])]", "&#169;" }                                      //  copyright
                               };
 
             string output = "";
-
-            if (!Regex.IsMatch(line, "<.*>"))
+            Regex htmlRegex = new Regex(@"(</?[\w\d]+(?:\s.*)?>)");
+            if (!htmlRegex.IsMatch(line))
             {
                 // If no HTML, do a simple search & replace.
                 for (int i = 0; i < glyphs.GetLength(0); ++i)
@@ -55,7 +55,7 @@ namespace Textile.Blocks
             }
             else
             {
-                string[] splits = Regex.Split(line, "(<.*?>)");
+                string[] splits = htmlRegex.Split(line);
                 string offtags = "code|pre|notextile";
                 bool codepre = false;
                 foreach (string split in splits)
@@ -64,12 +64,12 @@ namespace Textile.Blocks
                     if (modifiedSplit.Length == 0)
                         continue;
 
-                    if (Regex.IsMatch(modifiedSplit, @"<(" + offtags + ")>"))
+                    if (Regex.IsMatch(modifiedSplit, @"<(" + offtags + ")>", RegexOptions.IgnoreCase))
                         codepre = true;
-                    if (Regex.IsMatch(modifiedSplit, @"<\/(" + offtags + ")>"))
+                    if (Regex.IsMatch(modifiedSplit, @"<\/(" + offtags + ")>", RegexOptions.IgnoreCase))
                         codepre = false;
 
-                    if (!Regex.IsMatch(modifiedSplit, "<.*>") && !codepre)
+                    if (!htmlRegex.IsMatch(modifiedSplit) && !codepre)
                     {
                         for (int i = 0; i < glyphs.GetLength(0); ++i)
                         {

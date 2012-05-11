@@ -151,5 +151,17 @@ namespace Textile.UnitTests
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void GlyphsFormatTestMultipleGlyphs()
+        {
+            string text = "\"'I swear, captain,' replied I.\"";
+            string expected = "&#8220;&#8216;I swear, captain,&#8217; replied I.&#8221;";
+
+            GlyphBlockModifier f = new GlyphBlockModifier();
+            string actual = f.ModifyLine(text);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
