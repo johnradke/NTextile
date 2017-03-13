@@ -30,5 +30,4 @@ namespace Textile.UnitTests
             return _output.ToString();
         }
     }
-
 }

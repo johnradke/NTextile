@@ -1,203 +1,54 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 using Textile.Blocks;
 
 namespace Textile.UnitTests
 {
-    /// <summary>
-    ///This is a test class for BlockAttributesParser and is intended
-    ///to contain all BlockAttributesParser Unit Tests
-    ///</summary>
     [TestFixture]
     public class BlockAttributesParserTest
     {
-        /// <summary>
-        ///Initialize() is called once during test execution before
-        ///test methods in this test class are executed.
-        ///</summary>
-        [SetUp]
-        public void Initialize()
+        private static IEnumerable<TestCaseData> TestCases
         {
-            //  TODO: Add test initialization code
+            get
+            {
+                yield return new TestCaseData("(example1)").Returns(" class=\"example1\"").SetName("Class");
+                yield return new TestCaseData("(#big-red)").Returns(" id=\"big-red\"").SetName("Id");
+                yield return new TestCaseData("(example1#big-red2)").Returns(" class=\"example1\" id=\"big-red2\"").SetName("Class And Id");
+                yield return new TestCaseData("{color:blue;margin:30px}").Returns(" style=\"color:blue;margin:30px;\"").SetName("Custom Style");
+                yield return new TestCaseData("[fr]").Returns(" lang=\"fr\"").SetName("Language");
+                yield return new TestCaseData("<").Returns(" style=\"text-align: left;\"").SetName("Align Left");
+                yield return new TestCaseData(">").Returns(" style=\"text-align: right;\"").SetName("Align Right");
+                yield return new TestCaseData("=").Returns(" style=\"text-align: center;\"").SetName("Align Center");
+                yield return new TestCaseData("<>").Returns(" style=\"text-align: justify;\"").SetName("Align Justify");
+                yield return new TestCaseData("(").Returns(" style=\"padding-left: 1em;\"").SetName("Indent Left 1");
+                yield return new TestCaseData("((").Returns(" style=\"padding-left: 2em;\"").SetName("Indent Left 2");
+                yield return new TestCaseData(")))").Returns(" style=\"padding-right: 3em;\"").SetName("Indent Right 3");
+                yield return new TestCaseData(")").Returns(" style=\"padding-right: 1em;\"").SetName("Indent Right 1");
+                yield return new TestCaseData("()>").Returns(" style=\"padding-left: 1em;padding-right: 1em;text-align: right;\"").SetName("Align & Indent");
+                yield return new TestCaseData("()>[no]{color:red}").Returns(" style=\"color:red;padding-left: 1em;padding-right: 1em;text-align: right;\" lang=\"no\"").SetName("All");
+            }
         }
 
-        /// <summary>
-        ///Cleanup() is called once during test execution after
-        ///test methods in this class have executed unless
-        ///this test class' Initialize() method throws an exception.
-        ///</summary>
-        [TearDown]
-        public void Cleanup()
+        [TestCaseSource(nameof(TestCases))]
+        public string ParseBlockAttribute(string input)
         {
-            //  TODO: Add test cleanup code
+            return BlockAttributesParser.Parse(input);
         }
 
-
-        [Test]
-        public void ParseBlockAttributesTestClass()
+        private static IEnumerable<TestCaseData> RestrictedTestCases
         {
-            string input = "(example1)"; // TODO: Initialize to an appropriate value
-            string element = ""; // TODO: Initialize to an appropriate value
-
-            string expected = " class=\"example1\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
+            get
+            {
+                yield return new TestCaseData("[fr]").Returns(" lang=\"fr\"").SetName("Restricted-Language");
+                yield return new TestCaseData("()>[no]{color:red}").Returns(" lang=\"no\"").SetName("Restricted-All");
+                yield return new TestCaseData("()>{color:red}").Returns("").SetName("Restricted-NoLang");
+            }
         }
 
-        [Test]
-        public void ParseBlockAttributesTestId()
+        [TestCaseSource(nameof(RestrictedTestCases))]
+        public string ParseRestrictedAttributes(string input)
         {
-            string input = "(#big-red)"; // TODO: Initialize to an appropriate value
-            string element = ""; // TODO: Initialize to an appropriate value
-
-            string expected = " id=\"big-red\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesTestClassAndId()
-        {
-            string input = "(example1#big-red2)"; // TODO: Initialize to an appropriate value
-            string element = ""; // TODO: Initialize to an appropriate value
-
-            string expected = " class=\"example1\" id=\"big-red2\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesTestCustomStyle()
-        {
-            string input = "{color:blue;margin:30px}"; // TODO: Initialize to an appropriate value
-            string element = ""; // TODO: Initialize to an appropriate value
-
-            string expected = " style=\"color:blue;margin:30px;\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesTestLanguage()
-        {
-            string input = "[fr]"; // TODO: Initialize to an appropriate value
-            string element = ""; // TODO: Initialize to an appropriate value
-
-            string expected = " lang=\"fr\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesBlockAlign()
-        {
-            string element = "";
-
-            string input = "<";
-            string expected = " style=\"text-align: left;\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            input = ">";
-            expected = " style=\"text-align: right;\"";
-            actual = BlockAttributesParser.Parse(input, element);
-
-            input = "=";
-            expected = " style=\"text-align: center;\"";
-            actual = BlockAttributesParser.Parse(input, element);
-
-            input = "<>";
-            expected = " style=\"text-align: justify;\"";
-            actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesTestBlockIndent()
-        {
-            string element = "";
-
-            string input = "(";
-            string expected = " style=\"padding-left: 1em;\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            input = "((";
-            expected = " style=\"padding-left: 2em;\"";
-            actual = BlockAttributesParser.Parse(input, element);
-
-            input = ")))";
-            expected = "style=\"padding-right: 3em;\"";
-            actual = BlockAttributesParser.Parse(input, element);
-
-            input = ")";
-            expected = " style=\"padding-right: 1em;\"";
-            actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesCombinedAlignsAndIndents()
-        {
-            string element = "";
-
-            string input = "()>";
-            string expected = " style=\"padding-left: 1em;padding-right: 1em;text-align: right;\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesCombinedAll()
-        {
-            string element = "";
-
-            string input = "()>[no]{color:red}";
-            string expected = " style=\"color:red;padding-left: 1em;padding-right: 1em;text-align: right;\" lang=\"no\"";
-            string actual = BlockAttributesParser.Parse(input, element);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesRestricted1()
-        {
-            string input = "[fr]";
-            string element = "";
-
-            string expected = " lang=\"fr\"";
-            string actual = BlockAttributesParser.Parse(input, element, true);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesRestricted2()
-        {
-            string element = "";
-
-            string input = "()>[no]{color:red}";
-            string expected = " lang=\"no\"";
-            string actual = BlockAttributesParser.Parse(input, element, true);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void ParseBlockAttributesRestricted3()
-        {
-            string element = "";
-
-            string input = "()>{color:red}";
-            string expected = "";
-            string actual = BlockAttributesParser.Parse(input, element, true);
-
-            Assert.AreEqual(expected, actual);
+            return BlockAttributesParser.Parse(input, true);
         }
     }
 }

@@ -36,15 +36,14 @@ namespace Textile.States
             Write(input);
         }
 
+        public override bool ShouldExit(string input, string inputLookAhead) => true;
+
         protected override void OnContextAcquired()
         {
-            Match m = FootNoteRegex.Match(Tag);
-            m_noteID = Int32.Parse(m.Groups["id"].Value);
+            var m = FootNoteRegex.Match(Tag);
+            _noteID = int.Parse(m.Groups["id"].Value);
         }
 
-        public override bool ShouldNestState(FormatterState other)
-        {
-            return false;
-        }
+        public override bool ShouldNestState(FormatterState other) => false;
     }
 }

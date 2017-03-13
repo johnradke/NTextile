@@ -1,36 +1,10 @@
-﻿using Textile;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+
 namespace Textile.UnitTests
 {
-    /// <summary>
-    ///This is a test class for ComicNET.TextileFormatter and is intended
-    ///to contain all ComicNET.TextileFormatter Unit Tests
-    ///</summary>
     [TestFixture]
     public class TextileFormatterTest
     {
-        /// <summary>
-        ///Initialize() is called once during test execution before
-        ///test methods in this test class are executed.
-        ///</summary>
-        [SetUp]
-        public void Initialize()
-        {
-            //  TODO: Add test initialization code
-        }
-
-        /// <summary>
-        ///Cleanup() is called once during test execution after
-        ///test methods in this class have executed unless
-        ///this test class' Initialize() method throws an exception.
-        ///</summary>
-        [TearDown]
-        public void Cleanup()
-        {
-            //  TODO: Add test cleanup code
-        }
-
-
         [Test]
         public void FormatTestOneParagraph()
         {

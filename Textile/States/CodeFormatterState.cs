@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Textile.States
@@ -8,66 +5,54 @@ namespace Textile.States
     [FormatterState(@"^\s*<code" + TextileGlobals.HtmlAttributesPattern + ">")]
     public class CodeFormatterState : FormatterState
     {
-        bool m_shouldExitNextTime = false;
-        bool m_shouldFixHtmlEntities = false;
-
-        public CodeFormatterState()
-        {
-        }
+        bool _shouldExitNextTime = false;
+        bool _shouldFixHtmlEntities = false;
 
 		public override string Consume(FormatterStateConsumeContext context)
         {
             if (!Regex.IsMatch(context.Input, "</code>"))
             {
-                this.Formatter.ChangeState(this);
+                ChangeState(this);
             }
             else
             {
-                this.Formatter.ChangeState(new PassthroughFormatterState());
+                ChangeState(new PassthroughFormatterState());
             }
             return context.Input;
         }
 
-        public override bool ShouldNestState(FormatterState other)
-        {
-            return true;
-        }
+        public override bool ShouldNestState(FormatterState other) => true;
 
         public override void Enter()
         {
-            m_shouldFixHtmlEntities = false;
-        }
-
-        public override void Exit()
-        {
+            _shouldFixHtmlEntities = false;
         }
 
         public override void FormatLine(string input)
         {
-            if (m_shouldFixHtmlEntities)
+            if (_shouldFixHtmlEntities)
+            {
                 input = FixEntities(input);
-            Formatter.Output.WriteLine(input);
-            m_shouldFixHtmlEntities = true;
+            }
+
+            WriteLine(input);
+            _shouldFixHtmlEntities = true;
         }
 
 		public override bool ShouldExit(string input, string inputLookAhead)
         {
-            if (m_shouldExitNextTime)
+            if (_shouldExitNextTime)
+            {
                 return true;
-            m_shouldExitNextTime = Regex.IsMatch(input, @"</code>");
-            m_shouldFixHtmlEntities = !m_shouldExitNextTime;
+            }
+
+            _shouldExitNextTime = Regex.IsMatch(input, @"</code>");
+            _shouldFixHtmlEntities = !_shouldExitNextTime;
             return false;
         }
 
-        public override bool ShouldFormatBlocks(string input)
-        {
-            return false;
-        }
-
-        public override bool ShouldParseForNewFormatterState(string input)
-        {
-            return false;
-        }
+        public override bool ShouldParseForNewFormatterState(string input) => false;
+        public override bool ShouldFormatBlocks(string input) => false;
 
         private string FixEntities(string text)
         {

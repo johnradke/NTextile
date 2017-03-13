@@ -1,39 +1,31 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Textile.UnitTests
 {
-    class TestOutputter : Textile.IOutputter
+    class TestOutputter : IOutputter
     {
-        StringBuilder m_builder;
-
-        #region IOutputter Members
+        StringBuilder _builder;
 
         public void Begin()
         {
-            m_builder = new StringBuilder();
+            _builder = new StringBuilder();
         }
 
         public void Write(string text)
         {
-            m_builder.Append(text);
+            _builder.Append(text);
         }
 
         public void WriteLine(string line)
         {
-            m_builder.Append(line + "\n");
+            _builder.Append(line + "\n");
         }
 
-        public void End()
-        {
-        }
-
-        #endregion
+        public void End() { }
 
         public string GetOutput()
         {
-            return m_builder.ToString();
+            return _builder.ToString();
         }
     }
 }
