@@ -10,50 +10,32 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-#endregion
-
 
 namespace Textile.States
 {
-    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"fn[0-9]+" + SimpleBlockFormatterState.TextilePatternEnd)]
+    [FormatterState(TextilePatternBegin + @"fn[0-9]+" + TextilePatternEnd)]
     public class FootNoteFormatterState : SimpleBlockFormatterState
     {
         private static readonly Regex FootNoteRegex = new Regex(@"^fn(?<id>[0-9]+)");
 
-        private int m_noteID = 0;
-
-		public FootNoteFormatterState()
-        {
-        }
+        private int _noteID = 0;
 
         public override void Enter()
         {
-            Formatter.Output.Write(
-                string.Format("<p id=\"fn{0}\"{1}><sup>{2}</sup> ",
-                    m_noteID,
-                    FormattedStylesAndAlignment(),
-                    m_noteID));
+            Write($"<p id=\"fn{_noteID}\"{FormattedStylesAndAlignment()}><sup>{_noteID}</sup> ");
         }
 
         public override void Exit()
         {
-            Formatter.Output.WriteLine("</p>");
+            WriteLine("</p>");
         }
 
         public override void FormatLine(string input)
         {
-            Formatter.Output.Write(input);
+            Write(input);
         }
 
-		public override bool ShouldExit(string input, string inputLookAhead)
-        {
-            return true;
-        }
         protected override void OnContextAcquired()
         {
             Match m = FootNoteRegex.Match(Tag);

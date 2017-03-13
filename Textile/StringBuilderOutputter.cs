@@ -54,7 +54,7 @@ namespace Textile
 			m_stringBuilder.Append(text);
 		}
 
-		public void WriteLine(string line)
+		public void WriteLine(string line = null)
 		{
 			m_stringBuilder.Append(line);
 			m_stringBuilder.Append(m_newLine);

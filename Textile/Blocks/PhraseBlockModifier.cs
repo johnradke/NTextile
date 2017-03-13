@@ -71,7 +71,7 @@ namespace Textile.Blocks
                 return $"<{tag}>{m.Groups["atts"].Value}{m.Groups["end"].Value}</{tag}>";
             }
 
-            var atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", restrictedMode);
+            var atts = BlockAttributesParser.Parse(m.Groups["atts"].Value, "", restrictedMode);
             if (m.Groups["cite"].Length > 0)
             {
                 atts += $" cite=\"{m.Groups["cite"]}\"";

@@ -10,34 +10,24 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-#endregion
-
 
 namespace Textile.States
 {
 	/// <summary>
 	/// Formatting state for a bulleted list.
 	/// </summary>
-    [FormatterState(ListFormatterState.PatternBegin + @"\*+" + ListFormatterState.PatternEnd)]
+    [FormatterState(PatternBegin + @"\*+" + PatternEnd)]
 	public class UnorderedListFormatterState : ListFormatterState
 	{
-		public UnorderedListFormatterState()
-		{
-		}
-
 		protected override void WriteIndent()
 		{
-			Formatter.Output.WriteLine("<ul" + FormattedStylesAndAlignment() + ">");
+			WriteLine($"<ul{FormattedStylesAndAlignment()}>");
 		}
 
         protected override void WriteOutdent()
 		{
-			Formatter.Output.WriteLine("</ul>");
+			WriteLine("</ul>");
 		}
 
         protected override bool IsMatchForMe(string input, int minNestingDepth, int maxNestingDepth)

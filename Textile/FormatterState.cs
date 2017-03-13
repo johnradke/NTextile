@@ -10,13 +10,7 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-#endregion
-
 
 namespace Textile
 {
@@ -34,53 +28,38 @@ namespace Textile
         /// has the 'restrcted' mode turned on. If there is no owning formatter, 
         /// return false.
         /// </summary>
-        protected bool UseRestrictedMode
-        {
-            get
-            {
-                if (m_formatter != null)
-                    return m_formatter.UseRestrictedMode;
-                return false;
-            }
-        }
+        protected bool UseRestrictedMode => Formatter?.UseRestrictedMode ?? false;
 
-        private GenericFormatter m_formatter;
         /// <summary>
         /// Gets the formatter this state belongs to.
         /// </summary>
-        public GenericFormatter Formatter
-        {
-            get { return m_formatter; }
-			internal set { m_formatter = value; }
-        }
+        public GenericFormatter Formatter { get; internal set; }
+
+        protected void Write(string text) => Formatter.Output.Write(text);
+
+        protected void WriteLine(string line = null) => Formatter.Output.WriteLine(line);
+
+        protected void ChangeState(FormatterState newState) => Formatter.ChangeState(newState);
+
+        protected FormatterState CurrentState => Formatter.CurrentState;
 
         /// <summary>
         /// Gets or sets whether the formatter is enabled.
         /// </summary>
         public bool IsEnabled { get; set; }
 
-        /// <summary>
-        /// Constructs a new instance of <see cref="FormatterState"/>.
-        /// </summary>
-        protected FormatterState()
-        {
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         public abstract string Consume(FormatterStateConsumeContext context);
 
         /// <summary>
         /// Method called when the state is entered.
         /// </summary>
-        public abstract void Enter();
+        public virtual void Enter() { }
+
         /// <summary>
         /// Method called when the state is exited.
         /// </summary>
-        public abstract void Exit();
+        public virtual void Exit() { }
+
         /// <summary>
         /// Method called when a line of text should be written
         /// to the web form.
@@ -88,35 +67,9 @@ namespace Textile
         /// <param name="input">The line of text.</param>
         public abstract void FormatLine(string input);
 
-        /// <summary>
-        /// Returns whether this state can last for more than one line.
-        /// </summary>
-        /// <returns>A boolean value stating whether this state is only for one line.</returns>
-        /// This method should return true only if this state is genuinely
-        /// multi-line. For example, a header text is only one line long. You can
-        /// have several consecutive lines of header texts, but they are not the same
-        /// header - just several headers one after the other.
-        /// Bulleted and numbered lists are good examples of multi-line states.
-        //abstract public bool IsOneLineOnly();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         public abstract bool ShouldExit(string input, string inputLookAhead);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="actualTag"></param>
-        /// <param name="alignNfo"></param>
-        /// <param name="attNfo"></param>
-        /// <returns></returns>
-        public virtual bool ShouldNestState(FormatterState other)
-        {
-            return false;
-        }
+        public virtual bool ShouldNestState(FormatterState other) => false;
 
         /// <summary>
         /// Returns whether block formatting (quick phrase modifiers, etc.) should be
@@ -124,10 +77,7 @@ namespace Textile
         /// </summary>
         /// <param name="input">The line of text</param>
         /// <returns>Whether the line should be formatted for blocks</returns>
-        public virtual bool ShouldFormatBlocks(string input)
-        {
-            return true;
-        }
+        public virtual bool ShouldFormatBlocks(string input) => true;
 
         /// <summary>
         /// Returns whether the current state accepts being superceded by another one
@@ -135,41 +85,19 @@ namespace Textile
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public virtual bool ShouldParseForNewFormatterState(string input)
-        {
-            return true;
-        }
+        public virtual bool ShouldParseForNewFormatterState(string input) => true;
 
         /// <summary>
         /// Returns whether post-processors should be applied to this line.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public virtual bool ShouldPostProcess(string input)
-        {
-            return true;
-        }
+        public virtual bool ShouldPostProcess(string input) => true;
 
         /// <summary>
         /// Gets the formatting state we should fallback to if we don't find anything
         /// relevant in a line of text.
         /// </summary>
-        public virtual Type FallbackFormattingState
-        {
-            get
-            {
-                return typeof(States.ParagraphFormatterState);
-            }
-        }
-
-        protected FormatterState CurrentFormatterState
-        {
-            get { return this.Formatter.CurrentState; }
-        }
-
-        protected void ChangeFormatterState(FormatterState formatterState)
-        {
-            this.Formatter.ChangeState(formatterState);
-        }
+        public virtual Type FallbackFormattingState => typeof(States.ParagraphFormatterState);
     }
 }

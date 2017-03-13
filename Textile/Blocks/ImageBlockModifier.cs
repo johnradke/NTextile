@@ -39,7 +39,7 @@ namespace Textile.Blocks
 
         private string ImageFormatMatchEvaluator(Match m)
         {
-            var atts = new StringBuilder(BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", UseRestrictedMode));
+            var atts = new StringBuilder(BlockAttributesParser.Parse(m.Groups["atts"].Value, "", UseRestrictedMode));
             if (m.Groups["algn"].Length > 0)
             {
                 atts.Append($" align=\"{TextileGlobals.ImageAlign[m.Groups["algn"].Value]}\"");

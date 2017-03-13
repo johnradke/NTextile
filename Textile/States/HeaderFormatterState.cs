@@ -10,63 +10,43 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-#endregion
-
 
 namespace Textile.States
 {
     /// <summary>
     /// Formatting state for headers and titles.
     /// </summary>
-    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"h[0-9]+" + SimpleBlockFormatterState.TextilePatternEnd)]
+    [FormatterState(TextilePatternBegin + @"h[0-9]+" + TextilePatternEnd)]
     public class HeaderFormatterState : SimpleBlockFormatterState
     {
         private static readonly Regex HeaderRegex = new Regex(@"^h(?<lvl>[0-9]+)");
 
-        private int m_headerLevel = 0;
-        public int HeaderLevel
-        {
-            get { return m_headerLevel; }
-        }
-
-		public HeaderFormatterState()
-        {
-        }
+        private int _headerLevel;
 
         public override void Enter()
         {
-            Formatter.Output.Write(string.Format("<h{0}{1}>", HeaderLevel, FormattedStylesAndAlignment()));
+            Write($"<h{_headerLevel}{FormattedStylesAndAlignment()}>");
         }
 
         public override void Exit()
         {
-            Formatter.Output.WriteLine(string.Format("</h{0}>", HeaderLevel.ToString()));
+            WriteLine($"</h{_headerLevel}>");
         }
 
         protected override void OnContextAcquired()
         {
-            Match m = HeaderRegex.Match(Tag);
-            m_headerLevel = Int32.Parse(m.Groups["lvl"].Value);
+            var m = HeaderRegex.Match(Tag);
+            _headerLevel = int.Parse(m.Groups["lvl"].Value);
         }
 
         public override void FormatLine(string input)
         {
-            Formatter.Output.Write(input);
+            Write(input);
         }
 
-		public override bool ShouldExit(string intput, string inputLookAhead)
-        {
-            return true;
-        }
+        public override bool ShouldExit(string intput, string inputLookAhead) => true;
 
-        public override bool ShouldNestState(FormatterState other)
-        {
-            return false;
-        }
+        public override bool ShouldNestState(FormatterState other) => false;
     }
 }

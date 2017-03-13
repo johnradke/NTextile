@@ -1,44 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Textile.States
 {
-    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"pre" + SimpleBlockFormatterState.TextilePatternEnd)]
+    [FormatterState(TextilePatternBegin + @"pre" + TextilePatternEnd)]
     public class PreBlockFormatterState : SimpleBlockFormatterState
     {
-        public PreBlockFormatterState()
-        {
-        }
-
 		public override void Enter()
 		{
-            Formatter.Output.Write("<pre" + FormattedStylesAndAlignment() + ">");
+            Write("<pre" + FormattedStylesAndAlignment() + ">");
 		}
 
 		public override void Exit()
 		{
-			Formatter.Output.WriteLine("</pre>");
+			WriteLine("</pre>");
 		}
 
 		public override void FormatLine(string input)
 		{
-			Formatter.Output.Write(input);
+			Write(input);
 		}
 
 		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (Regex.IsMatch(input, @"^\s*$"))
+            {
                 return true;
-            Formatter.Output.WriteLine("");
+            }
+
+            WriteLine();
+
             return false;
         }
 
-        public override Type FallbackFormattingState
-        {
-            get { return null; }
-        }
+        public override Type FallbackFormattingState => null;
     }
 }

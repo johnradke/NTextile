@@ -10,51 +10,43 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-#endregion
 
 namespace Textile.States
 {
     /// <summary>
     /// Formatting state for a standard text (i.e. just paragraphs).
     /// </summary>
-    [FormatterState(SimpleBlockFormatterState.TextilePatternBegin + @"p" + SimpleBlockFormatterState.TextilePatternEnd)]
+    [FormatterState(TextilePatternBegin + @"p" + TextilePatternEnd)]
     public class ParagraphFormatterState : SimpleBlockFormatterState
     {
-        public ParagraphFormatterState()
-        {
-        }
-
         public override void Enter()
         {
-            Formatter.Output.Write("<p" + FormattedStylesAndAlignment() + ">");
+            Write("<p" + FormattedStylesAndAlignment() + ">");
         }
 
         public override void Exit()
         {
-            Formatter.Output.WriteLine("</p>");
+            WriteLine("</p>");
         }
 
         public override void FormatLine(string input)
         {
-            Formatter.Output.Write(input);
+            Write(input);
         }
 
 		public override bool ShouldExit(string input, string inputLookAhead)
         {
             if (Regex.IsMatch(input, @"^\s*$"))
+            {
                 return true;
-            Formatter.Output.WriteLine("<br />");
+            }
+
+            WriteLine("<br />");
+
             return false;
         }
 
-        public override bool ShouldNestState(FormatterState other)
-        {
-            return false;
-        }
+        public override bool ShouldNestState(FormatterState other) => false;
     }
 }

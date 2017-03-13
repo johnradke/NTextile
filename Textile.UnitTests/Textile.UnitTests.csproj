@@ -81,6 +81,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TextileFormatterTest.cs" />
+    <Compile Include="TrimmingOutputter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Textile\Textile.csproj">

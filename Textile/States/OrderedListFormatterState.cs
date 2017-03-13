@@ -10,34 +10,24 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-#endregion
-
 
 namespace Textile.States
 {
 	/// <summary>
 	/// Formatting state for a numbered list.
 	/// </summary>
-    [FormatterState(ListFormatterState.PatternBegin + @"#+" + ListFormatterState.PatternEnd)]
+    [FormatterState(PatternBegin + @"#+" + PatternEnd)]
 	public class OrderedListFormatterState : ListFormatterState
 	{
-		public OrderedListFormatterState()
-		{
-		}
-
 		protected override void WriteIndent()
 		{
-            Formatter.Output.WriteLine("<ol" + FormattedStylesAndAlignment() + ">");
+            WriteLine("<ol" + FormattedStylesAndAlignment() + ">");
 		}
 
 		protected override void WriteOutdent()
 		{
-			Formatter.Output.WriteLine("</ol>");
+			WriteLine("</ol>");
 		}
 
         protected override bool IsMatchForMe(string input, int minNestingDepth, int maxNestingDepth)

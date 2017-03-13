@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Textile.Blocks;
 #endregion
 
 
@@ -28,86 +29,92 @@ namespace Textile.States
         internal const string PatternBegin = @"^\s*(?<tag>";
         internal const string PatternEnd = @")" + TextileGlobals.BlockModifiersPattern + @"(?:\s+)? (?<content>.*)$";
 
-        private bool m_firstItem = true;
-        private bool m_firstItemLine = true;
-        private string m_tag;
-        private string m_attsInfo;
-        private string m_alignInfo;
+        private bool _firstItem = true;
+        private bool _firstItemLine = true;
+        private string _tag;
+        private string _attsInfo;
+        private string _alignInfo;
 
         protected int NestingDepth
         {
-            get { return m_tag.Length; }
-        }
-
-        public ListFormatterState()
-        {
+            get { return _tag.Length; }
         }
 
 		public override string Consume(FormatterStateConsumeContext context)
         {
-            m_tag = context.Match.Groups["tag"].Value;
-            m_alignInfo = context.Match.Groups["align"].Value;
-            m_attsInfo = context.Match.Groups["atts"].Value;
-            string input = context.Match.Groups["content"].Value;
+            _tag = context.Match.Groups["tag"].Value;
+            _alignInfo = context.Match.Groups["align"].Value;
+            _attsInfo = context.Match.Groups["atts"].Value;
 
-            this.Formatter.ChangeState(this);
+            var input = context.Match.Groups["content"].Value;
+
+            ChangeState(this);
 
             return input;
         }
 
         public sealed override void Enter()
         {
-            m_firstItem = true;
-            m_firstItemLine = true;
+            _firstItem = true;
+            _firstItemLine = true;
             WriteIndent();
         }
 
         public sealed override void Exit()
         {
-            Formatter.Output.WriteLine("</li>");
+            WriteLine("</li>");
             WriteOutdent();
         }
 
         public sealed override void FormatLine(string input)
         {
-            if (m_firstItemLine)
+            if (_firstItemLine)
             {
-                if (!m_firstItem)
-                    Formatter.Output.WriteLine("</li>");
-                Formatter.Output.Write("<li>");
-                m_firstItemLine = false;
+                if (!_firstItem)
+                {
+                    WriteLine("</li>");
+                }
+
+                Write("<li>");
+
+                _firstItemLine = false;
             }
             else
             {
-                Formatter.Output.WriteLine("<br />");
+                WriteLine("<br />");
             }
-            Formatter.Output.Write(input);
-            m_firstItem = false;
+
+            Write(input);
+            _firstItem = false;
         }
 
         public sealed override bool ShouldNestState(FormatterState other)
         {
-            ListFormatterState listState = (ListFormatterState)other;
-            return (listState.NestingDepth > NestingDepth);
+            var listState = (ListFormatterState)other;
+            return listState.NestingDepth > NestingDepth;
         }
 
 		public sealed override bool ShouldExit(string input, string inputLookAhead)
         {
             // If we have an empty line, we can exit.
             if (string.IsNullOrEmpty(input))
+            {
                 return true;
+            }
 
             // We exit this list if the next
             // list item is of the same type but less
             // deep as us, or of the other type of
             // list and as deep or less.
-            if (NestingDepth > 1)
+            if (NestingDepth > 1 && IsMatchForMe(input, 1, NestingDepth - 1))
             {
-                if (IsMatchForMe(input, 1, NestingDepth - 1))
-                    return true;
-            }
-            if (IsMatchForOthers(input, 1, NestingDepth))
                 return true;
+            }
+
+            if (IsMatchForOthers(input, 1, NestingDepth))
+            {
+                return true;
+            }
 
             // As it seems we're going to continue taking
             // care of this line, we take the opportunity
@@ -115,7 +122,9 @@ namespace Textile.States
             // previously (no "**" or "##" tags), or if it's
             // a new list item.
             if (IsMatchForMe(input, NestingDepth, NestingDepth))
-                m_firstItemLine = true;
+            {
+                _firstItemLine = true;
+            }
 
             return false;
         }
@@ -123,11 +132,7 @@ namespace Textile.States
         public sealed override bool ShouldParseForNewFormatterState(string input)
         {
             // We don't let anyone but ourselves mess with our stuff.
-            if (IsMatchForMe(input, 1, 100))
-                return true;
-            if (IsMatchForOthers(input, 1, 100))
-                return true;
-            return false;
+            return IsMatchForMe(input, 1, 100) || IsMatchForOthers(input, 1, 100);
         }
 
         protected abstract void WriteIndent();
@@ -137,7 +142,7 @@ namespace Textile.States
 
         protected string FormattedStylesAndAlignment()
         {
-            return Blocks.BlockAttributesParser.ParseBlockAttributes(m_alignInfo + m_attsInfo, UseRestrictedMode);
+            return BlockAttributesParser.Parse(_alignInfo + _attsInfo, UseRestrictedMode);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Textile.UnitTests
             string element = ""; // TODO: Initialize to an appropriate value
 
             string expected = " class=\"example1\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -51,7 +51,7 @@ namespace Textile.UnitTests
             string element = ""; // TODO: Initialize to an appropriate value
 
             string expected = " id=\"big-red\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -63,7 +63,7 @@ namespace Textile.UnitTests
             string element = ""; // TODO: Initialize to an appropriate value
 
             string expected = " class=\"example1\" id=\"big-red2\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -75,7 +75,7 @@ namespace Textile.UnitTests
             string element = ""; // TODO: Initialize to an appropriate value
 
             string expected = " style=\"color:blue;margin:30px;\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -87,7 +87,7 @@ namespace Textile.UnitTests
             string element = ""; // TODO: Initialize to an appropriate value
 
             string expected = " lang=\"fr\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -99,19 +99,19 @@ namespace Textile.UnitTests
 
             string input = "<";
             string expected = " style=\"text-align: left;\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             input = ">";
             expected = " style=\"text-align: right;\"";
-            actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            actual = BlockAttributesParser.Parse(input, element);
 
             input = "=";
             expected = " style=\"text-align: center;\"";
-            actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            actual = BlockAttributesParser.Parse(input, element);
 
             input = "<>";
             expected = " style=\"text-align: justify;\"";
-            actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -123,19 +123,19 @@ namespace Textile.UnitTests
 
             string input = "(";
             string expected = " style=\"padding-left: 1em;\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             input = "((";
             expected = " style=\"padding-left: 2em;\"";
-            actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            actual = BlockAttributesParser.Parse(input, element);
 
             input = ")))";
             expected = "style=\"padding-right: 3em;\"";
-            actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            actual = BlockAttributesParser.Parse(input, element);
 
             input = ")";
             expected = " style=\"padding-right: 1em;\"";
-            actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -147,7 +147,7 @@ namespace Textile.UnitTests
 
             string input = "()>";
             string expected = " style=\"padding-left: 1em;padding-right: 1em;text-align: right;\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -159,7 +159,7 @@ namespace Textile.UnitTests
 
             string input = "()>[no]{color:red}";
             string expected = " style=\"color:red;padding-left: 1em;padding-right: 1em;text-align: right;\" lang=\"no\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
+            string actual = BlockAttributesParser.Parse(input, element);
 
             Assert.AreEqual(expected, actual);
         }
@@ -171,7 +171,7 @@ namespace Textile.UnitTests
             string element = "";
 
             string expected = " lang=\"fr\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element, true);
+            string actual = BlockAttributesParser.Parse(input, element, true);
 
             Assert.AreEqual(expected, actual);
         }
@@ -183,7 +183,7 @@ namespace Textile.UnitTests
 
             string input = "()>[no]{color:red}";
             string expected = " lang=\"no\"";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element, true);
+            string actual = BlockAttributesParser.Parse(input, element, true);
 
             Assert.AreEqual(expected, actual);
         }
@@ -195,7 +195,7 @@ namespace Textile.UnitTests
 
             string input = "()>{color:red}";
             string expected = "";
-            string actual = BlockAttributesParser.ParseBlockAttributes(input, element, true);
+            string actual = BlockAttributesParser.Parse(input, element, true);
 
             Assert.AreEqual(expected, actual);
         }

@@ -7,37 +7,6 @@ using System.IO;
 
 namespace Textile.UnitTests
 {
-    public class TrimmingOutputter : Textile.IOutputter
-    {
-        StringBuilder m_output = new StringBuilder();
-
-        public void Begin()
-        {
-            m_output.Length = 0;
-        }
-
-        public void Write(string text)
-        {
-            text = text.Trim(' ');
-            m_output.Append(text);
-        }
-
-        public void WriteLine(string line)
-        {
-            line = line.Trim(' ');
-            m_output.AppendLine(line);
-        }
-
-        public void End()
-        {
-        }
-
-        public override string ToString()
-        {
-            return m_output.ToString();
-        }
-    }
-
     [TestFixture]
     public class DataDrivenTest
     {

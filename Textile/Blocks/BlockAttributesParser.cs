@@ -27,36 +27,38 @@ namespace Textile.Blocks
         private static readonly Regex PaddingRightRegex = new Regex(@"([)]+)", TextileGlobals.BlockModifierRegexOptions);
         private static readonly Regex TextAlignRegex = new Regex("(" + TextileGlobals.HorizontalAlignPattern + ")", TextileGlobals.BlockModifierRegexOptions);
 
-        static public string ParseBlockAttributes(string input)
+        static public string Parse(string input)
         {
-            return ParseBlockAttributes(input, "");
+            return Parse(input, "");
         }
 
-        static public string ParseBlockAttributes(string input, string element)
+        static public string Parse(string input, string element)
         {
-            return ParseBlockAttributes(input, element, false);
+            return Parse(input, element, false);
         }
 
-        static public string ParseBlockAttributes(string input, bool restrictedMode)
+        static public string Parse(string input, bool restrictedMode)
         {
-            return ParseBlockAttributes(input, "", restrictedMode);
+            return Parse(input, "", restrictedMode);
         }
 
-        static public string ParseBlockAttributes(string input, string element, bool restrictedMode)
+        static public string Parse(string input, string element, bool restrictedMode)
         {
             if (input.Length == 0)
+            {
                 return string.Empty;
+            }
 
-            string style = string.Empty;
-            string cssClass = string.Empty;
-            string lang = string.Empty;
-            string colspan = string.Empty;
-            string rowspan = string.Empty;
-            string id = string.Empty;
-            string atts = string.Empty;
+            var style = string.Empty;
+            var cssClass = string.Empty;
+            var lang = string.Empty;
+            var colspan = string.Empty;
+            var rowspan = string.Empty;
+            var id = string.Empty;
+            var atts = string.Empty;
 
             Match m;
-            string matched = input;
+            var matched = input;
             if (element == "td")
             {
                 m = ColumnSpanRegex.Match(matched);

@@ -39,7 +39,7 @@ namespace Textile.Blocks
 
         private string HyperLinksFormatMatchEvaluator(Match m)
         {
-            var atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", UseRestrictedMode);
+            var atts = BlockAttributesParser.Parse(m.Groups["atts"].Value, "", UseRestrictedMode);
             if (m.Groups["title"].Length > 0)
             {
                 atts += $" title=\"{m.Groups["title"].Value}\"";

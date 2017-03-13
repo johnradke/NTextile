@@ -47,7 +47,7 @@ namespace Textile
         /// additionnal end of line character.
         /// </summary>
         /// <param name="line">The formatted HTML text.</param>
-        void WriteLine(string line);
+        void WriteLine(string line = null);
 
         /// <summary>
         /// Method called at the end of the formatting.
