@@ -10,13 +10,7 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-#endregion
-
 
 namespace Textile.Blocks
 {
@@ -25,7 +19,7 @@ namespace Textile.Blocks
         public override string ModifyLine(string line)
         {
             // Replace "@...@" zones with "<code>" tags.
-            MatchEvaluator me = new MatchEvaluator(CodeFormatMatchEvaluator);
+            var me = new MatchEvaluator(CodeFormatMatchEvaluator);
             line = Regex.Replace(line,
                                   @"(?<before>^|([\s\([{]))" +    // before
                                    "@" +
@@ -54,10 +48,13 @@ namespace Textile.Blocks
 
         static public string CodeFormatMatchEvaluator(Match m)
         {
-            string res = m.Groups["before"].Value + "<code";
+            var res = $"{m.Groups["before"].Value}<code";
             if (m.Groups["lang"].Length > 0)
-                res += " language=\"" + m.Groups["lang"].Value + "\"";
-            res += ">" + m.Groups["code"].Value + "</code>" + m.Groups["after"].Value;
+            {
+                res += $" language=\"{m.Groups["lang"].Value}\"";
+            }
+
+            res += $">{m.Groups["code"].Value}</code>{m.Groups["after"].Value}";
             return res;
         }
     }

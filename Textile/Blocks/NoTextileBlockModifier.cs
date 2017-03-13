@@ -10,14 +10,6 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-#endregion
-
-
 namespace Textile.Blocks
 {
     public class NoTextileBlockModifier : BlockModifier

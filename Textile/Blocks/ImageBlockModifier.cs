@@ -10,12 +10,8 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
-#region Using Statements
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-#endregion
 
 namespace Textile.Blocks
 {
@@ -26,55 +22,61 @@ namespace Textile.Blocks
         public override string ModifyLine(string line)
         {
             line = Regex.Replace(line,
-                                    @"\!" +                   // opening !
-                                    @"(?<algn>\<|\=|\>)?" +   // optional alignment atts
-                                    TextileGlobals.BlockModifiersPattern + // optional style, public class atts
-                                    @"(?:\. )?" +             // optional dot-space
-                                    @"(?<url>[^\s(!]+)" +     // presume this is the src
-                                    @"\s?" +                  // optional space
-                                    @"(?:\((?<title>([^\)]+))\))?" +// optional title
-                                    @"\!" +                   // closing
-                                    @"(?::(?<href>(\S+)))?" +     // optional href
-                                    @"(?=\s|\.|,|;|\)|\||$)",               // lookahead: space or simple punctuation or end of string
-                                new MatchEvaluator(ImageFormatMatchEvaluator)
-                                );
+                @"\!" +                   // opening !
+                @"(?<algn>\<|\=|\>)?" +   // optional alignment atts
+                TextileGlobals.BlockModifiersPattern + // optional style, public class atts
+                @"(?:\. )?" +             // optional dot-space
+                @"(?<url>[^\s(!]+)" +     // presume this is the src
+                @"\s?" +                  // optional space
+                @"(?:\((?<title>([^\)]+))\))?" +// optional title
+                @"\!" +                   // closing
+                @"(?::(?<href>(\S+)))?" +     // optional href
+                @"(?=\s|\.|,|;|\)|\||$)",               // lookahead: space or simple punctuation or end of string
+                new MatchEvaluator(ImageFormatMatchEvaluator));
+
             return line;
         }
 
         private string ImageFormatMatchEvaluator(Match m)
         {
-            string atts = BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", UseRestrictedMode);
+            var atts = new StringBuilder(BlockAttributesParser.ParseBlockAttributes(m.Groups["atts"].Value, "", UseRestrictedMode));
             if (m.Groups["algn"].Length > 0)
-                atts += " align=\"" + TextileGlobals.ImageAlign[m.Groups["algn"].Value] + "\"";
+            {
+                atts.Append($" align=\"{TextileGlobals.ImageAlign[m.Groups["algn"].Value]}\"");
+            }
+
             if (m.Groups["title"].Length > 0)
             {
-                atts += " title=\"" + m.Groups["title"].Value + "\"";
-                atts += " alt=\"" + m.Groups["title"].Value + "\"";
+                atts.Append($" title=\"{m.Groups["title"].Value}\"");
+                atts.Append($" alt=\"{m.Groups["title"].Value}\"");
             }
             else
             {
-                atts += " alt=\"\"";
+                atts.Append(" alt=\"\"");
             }
-            // Get Image Size?
 
             // Validate the URL.
-            string url = m.Groups["url"].Value;
-            if (url.Contains("\"")) // Disable the URL if someone's trying a cheap hack.
+            var url = m.Groups["url"].Value;
+            if (url.Contains("\""))
+            {   
+                // Disable the URL if someone's trying a cheap hack.
                 url = "#";
+            }
 
-            string res = "<img src=\"" + url + "\"" + atts + " />";
+            string res = $"<img src=\"{url}\"{atts} />";
 
             if (m.Groups["href"].Length > 0)
             {
-                string href = m.Groups["href"].Value;
-                string end = string.Empty;
-                Match endMatch = HrefRegex.Match(href);
+                var href = m.Groups["href"].Value;
+                var end = string.Empty;
+                var endMatch = HrefRegex.Match(href);
                 if (m.Success && !string.IsNullOrEmpty(endMatch.Groups["end"].Value))
                 {
                     href = href.Substring(0, href.Length - 1);
                     end = endMatch.Groups["end"].Value;
                 }
-                res = "<a href=\"" + TextileGlobals.EncodeHTMLLink(href) + "\">" + res + "</a>" + end;
+
+                res = $"<a href=\"{TextileGlobals.EncodeHTMLLink(href)}\">{res}</a>{end}";
             }
 
             return res;

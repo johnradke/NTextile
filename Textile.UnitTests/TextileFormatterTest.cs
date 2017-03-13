@@ -315,22 +315,22 @@ namespace Textile.UnitTests
                                 "<th>attribute list </th>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"text-align:left;\">align left </td>\n" +
+                                "<td style=\"text-align: left;\">align left </td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"text-align:right;\">align right</td>\n" +
+                                "<td style=\"text-align: right;\">align right</td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"text-align:center;\">center </td>\n" +
+                                "<td style=\"text-align: center;\">center </td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"text-align:justify;\">justify </td>\n" +
+                                "<td style=\"text-align: justify;\">justify </td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"vertical-align:top;\">valign top </td>\n" +
+                                "<td style=\"vertical-align: top;\">valign top </td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"vertical-align:bottom;\">bottom </td>\n" +
+                                "<td style=\"vertical-align: bottom;\">bottom </td>\n" +
                                 "</tr>\n" +
                                 "</table>\n";
             string actual = output.GetOutput();

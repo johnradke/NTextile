@@ -98,19 +98,19 @@ namespace Textile.UnitTests
             string element = "";
 
             string input = "<";
-            string expected = " style=\"text-align:left;\"";
+            string expected = " style=\"text-align: left;\"";
             string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             input = ">";
-            expected = " style=\"text-align:right;\"";
+            expected = " style=\"text-align: right;\"";
             actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             input = "=";
-            expected = " style=\"text-align:center;\"";
+            expected = " style=\"text-align: center;\"";
             actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             input = "<>";
-            expected = " style=\"text-align:justify;\"";
+            expected = " style=\"text-align: justify;\"";
             actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             Assert.AreEqual(expected, actual);
@@ -122,19 +122,19 @@ namespace Textile.UnitTests
             string element = "";
 
             string input = "(";
-            string expected = " style=\"padding-left:1em;\"";
+            string expected = " style=\"padding-left: 1em;\"";
             string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             input = "((";
-            expected = " style=\"padding-left:2em;\"";
+            expected = " style=\"padding-left: 2em;\"";
             actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             input = ")))";
-            expected = "style=\"padding-right:3em;\"";
+            expected = "style=\"padding-right: 3em;\"";
             actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             input = ")";
-            expected = " style=\"padding-right:1em;\"";
+            expected = " style=\"padding-right: 1em;\"";
             actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             Assert.AreEqual(expected, actual);
@@ -146,7 +146,7 @@ namespace Textile.UnitTests
             string element = "";
 
             string input = "()>";
-            string expected = " style=\"padding-left:1em;padding-right:1em;text-align:right;\"";
+            string expected = " style=\"padding-left: 1em;padding-right: 1em;text-align: right;\"";
             string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             Assert.AreEqual(expected, actual);
@@ -158,7 +158,7 @@ namespace Textile.UnitTests
             string element = "";
 
             string input = "()>[no]{color:red}";
-            string expected = " style=\"color:red;padding-left:1em;padding-right:1em;text-align:right;\" lang=\"no\"";
+            string expected = " style=\"color:red;padding-left: 1em;padding-right: 1em;text-align: right;\" lang=\"no\"";
             string actual = BlockAttributesParser.ParseBlockAttributes(input, element);
 
             Assert.AreEqual(expected, actual);
