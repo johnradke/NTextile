@@ -50,13 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockAttributesParserTest.cs" />
-    <Compile Include="CodeFormatterTest.cs" />
     <Compile Include="DataDrivenTest.cs" />
     <Compile Include="FootNotesReferencesFormatterTest.cs" />
     <Compile Include="GlyphsFormatterTest.cs" />
     <Compile Include="HyperLinksFormatterTest.cs" />
     <Compile Include="ImageFormatterTest.cs" />
-    <Compile Include="NoTextileFormatterTest.cs" />
     <Compile Include="PhraseModifierFormatterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestOutputter.cs">
