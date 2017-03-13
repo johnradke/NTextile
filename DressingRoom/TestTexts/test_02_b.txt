@@ -1,2 +1,0 @@
-|one|row|of data|
-|another|one|here|

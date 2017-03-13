@@ -1,16 +1,15 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using System.Linq;
+using System.Reflection;
+using System.IO;
 
 namespace Textile.UnitTests
 {
     public class TrimmingOutputter : Textile.IOutputter
     {
         StringBuilder m_output = new StringBuilder();
-
-        #region IOutputter Members
 
         public void Begin()
         {
@@ -33,8 +32,6 @@ namespace Textile.UnitTests
         {
         }
 
-        #endregion
-
         public override string ToString()
         {
             return m_output.ToString();
@@ -44,6 +41,8 @@ namespace Textile.UnitTests
     [TestFixture]
     public class DataDrivenTest
     {
+        private static readonly Assembly _assembly = typeof(DataDrivenTest).Assembly;
+
         private enum TestDataStep
         {
             Outside,
@@ -53,32 +52,39 @@ namespace Textile.UnitTests
             ReadingMultilineOut,
         }
 
-        public static string[] GetTestDataFiles()
+        public static string[] HelloHelloHello()
         {
-            return System.IO.Directory.GetFiles(@"..\..\TestData", "*.yml");
+            return _assembly.GetManifestResourceNames().Where(n => n.EndsWith(".yml")).ToArray();
+        }
+
+        public static StreamReader GetReader(string resourceName)
+        {
+            return new StreamReader(_assembly.GetManifestResourceStream(resourceName));
         }
 
         private const string TestDataPreamblePattern = @"^[\-]{3,}\s*(#.*)?$";
 
-		[Test]
-		[TestCaseSource("GetTestDataFiles")]
-        public void TestDataFile(string dataFile)
+		[TestCaseSource("HelloHelloHello")]
+        public void TestDataFile(string resourceName)
         {
-            string[] dataLines = System.IO.File.ReadAllLines(dataFile);
+            var reader = GetReader(resourceName);
 
-            bool didTest = false;
-            StringBuilder inputData = new StringBuilder();
-            StringBuilder outputData = new StringBuilder();
-            TestDataStep step = TestDataStep.Outside;
-            foreach (string dataLine in dataLines)
+            var didTest = false;
+            var inputData = new StringBuilder();
+            var outputData = new StringBuilder();
+            var step = TestDataStep.Outside;
+
+            do
             {
+                var dataLine = reader.ReadLine();
+
                 if (step == TestDataStep.Outside)
                 {
-                    Assert.IsTrue(Regex.IsMatch(dataLine, TestDataPreamblePattern), "Expected to find '---' before each test. File {0} misses one.", dataFile);
+                    Assert.IsTrue(Regex.IsMatch(dataLine, TestDataPreamblePattern), "Expected to find '---' before each test. File {0} misses one.", resourceName);
                     step = TestDataStep.ReadingIn;
                     continue;
                 }
-                
+
                 if (step == TestDataStep.ReadingIn)
                 {
                     if (Regex.IsMatch(dataLine, @"^in:\s*\|-\s*$"))
@@ -91,7 +97,7 @@ namespace Textile.UnitTests
                     {
                         // single line input data
                         Match m = Regex.Match(dataLine, @"^in:\s*(?<input>.*)$");
-                        Assert.IsTrue(m.Success, "Couldn't parse single line input data in file {0}: {1}", dataFile, dataLine);
+                        Assert.IsTrue(m.Success, "Couldn't parse single line input data in file {0}: {1}", resourceName, dataLine);
                         string data = m.Groups["input"].Value.Trim(new char[] { ' ', '\'' });
                         inputData.Append(data);
                         step = TestDataStep.ReadingOut;
@@ -127,12 +133,12 @@ namespace Textile.UnitTests
                     {
                         // single line output data
                         Match m = Regex.Match(dataLine, @"^out:\s*(?<output>.*)$");
-                        Assert.IsTrue(m.Success, "Couldn't parse single line output data in file {0}: {1}", dataFile, dataLine);
+                        Assert.IsTrue(m.Success, "Couldn't parse single line output data in file {0}: {1}", resourceName, dataLine);
                         string data = m.Groups["output"].Value.Trim(new char[] { ' ', '\'' });
                         outputData.Append(data);
 
                         didTest = true;
-                        DoTestFormatting(inputData.ToString(), outputData.ToString(), dataFile);
+                        DoTestFormatting(inputData.ToString(), outputData.ToString(), resourceName);
                         inputData.Length = 0;
                         outputData.Length = 0;
 
@@ -149,7 +155,7 @@ namespace Textile.UnitTests
                         step = TestDataStep.ReadingIn;
 
                         didTest = true;
-                        DoTestFormatting(inputData.ToString(), outputData.ToString(), dataFile);
+                        DoTestFormatting(inputData.ToString(), outputData.ToString(), resourceName);
                         inputData.Length = 0;
                         outputData.Length = 0;
 
@@ -163,15 +169,16 @@ namespace Textile.UnitTests
                         continue;
                     }
                 }
-            }
+            } while (!reader.EndOfStream);
+
             if (inputData.Length > 0 && outputData.Length > 0)
             {
                 // Process the last test
                 didTest = true;
-                DoTestFormatting(inputData.ToString(), outputData.ToString(), dataFile);
+                DoTestFormatting(inputData.ToString(), outputData.ToString(), resourceName);
             }
 
-            Assert.IsTrue(didTest, "File {0} doesn't have any tests in it.", dataFile);
+            Assert.IsTrue(didTest, "File {0} doesn't have any tests in it.", resourceName);
         }
 
         private void DoTestFormatting(string input, string expected, string dataFile)

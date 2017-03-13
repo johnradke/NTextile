@@ -1,8 +1,0 @@
-Comic.NET allows you to add a few things to your webcomic:
-
-	* Some simple little news items like this
-	** Yep!
-	* In which you can *format* stuff
-	* (among _other_ things)
-	
-And yep, you can add you own news too.

@@ -1,6 +1,0 @@
-Testing a multiline blockquote...
-
-bq. This is a multiline
-blockquote paragraph.
-
-And now it's over.

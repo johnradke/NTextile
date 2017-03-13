@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A8B4C7E-1826-471F-A32A-228225804935}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Textile.UnitTests</RootNamespace>
     <AssemblyName>Textile.UnitTests</AssemblyName>
@@ -15,7 +15,7 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -45,6 +45,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,23 +55,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit-console-runner, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\NUnit\bin\net-2.0\lib\nunit-console-runner.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.core, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\NUnit\bin\net-2.0\lib\nunit.core.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\NUnit\bin\net-2.0\framework\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.util, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\NUnit\bin\net-2.0\lib\nunit.util.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -86,9 +76,6 @@
     <Compile Include="ImageFormatterTest.cs" />
     <Compile Include="NoTextileFormatterTest.cs" />
     <Compile Include="PhraseModifierFormatterTest.cs" />
-    <Compile Include="Program.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestOutputter.cs">
       <SubType>Code</SubType>
@@ -135,24 +122,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="TestData\blockquote.yml" />
-    <None Include="TestData\blocks.yml" />
-    <None Include="TestData\code.yml" />
-    <None Include="TestData\hard_breaks.yml" />
-    <None Include="TestData\html.yml" />
-    <None Include="TestData\images.yml" />
-    <None Include="TestData\instiki.yml" />
-    <None Include="TestData\links.yml" />
-    <None Include="TestData\lists.yml" />
-    <None Include="TestData\notextile.yml" />
-    <None Include="TestData\poignant.yml" />
-    <None Include="TestData\precode.yml" />
-    <None Include="TestData\table.yml" />
-    <None Include="TestData\textism.yml" />
+    <None Include="packages.config" />
+    <EmbeddedResource Include="TestData\blockquote.yml" />
+    <EmbeddedResource Include="TestData\blocks.yml" />
+    <EmbeddedResource Include="TestData\code.yml" />
+    <EmbeddedResource Include="TestData\hard_breaks.yml" />
+    <EmbeddedResource Include="TestData\html.yml" />
+    <EmbeddedResource Include="TestData\images.yml" />
+    <EmbeddedResource Include="TestData\instiki.yml" />
+    <EmbeddedResource Include="TestData\links.yml" />
+    <EmbeddedResource Include="TestData\lists.yml" />
+    <EmbeddedResource Include="TestData\notextile.yml" />
+    <EmbeddedResource Include="TestData\poignant.yml" />
+    <EmbeddedResource Include="TestData\precode.yml" />
+    <EmbeddedResource Include="TestData\table.yml" />
+    <EmbeddedResource Include="TestData\textism.yml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestData\markdown.yml.txt" />
     <Content Include="TestData\Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
