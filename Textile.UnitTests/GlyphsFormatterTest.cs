@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Textile.Blocks;
 
-namespace Textile.UnitTests
+namespace Textile.Test
 {
     [TestFixture]
     public class GlyphsFormatterTest

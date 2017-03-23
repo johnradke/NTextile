@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.IO;
 
-namespace Textile.UnitTests
+namespace Textile.Test
 {
     [TestFixture]
     public class DataDrivenTest

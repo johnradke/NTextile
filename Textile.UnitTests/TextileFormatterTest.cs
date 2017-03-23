@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Textile.UnitTests
+namespace Textile.Test
 {
     [TestFixture]
     public class TextileFormatterTest

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Textile.Blocks;
 
-namespace Textile.UnitTests
+namespace Textile.Test
 {
     [TestFixture]
     public class BlockAttributesParserTest

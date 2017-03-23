@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Textile.UnitTests
+namespace Textile.Test
 {
     class TestOutputter : IOutputter
     {
