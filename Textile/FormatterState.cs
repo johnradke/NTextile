@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using Textile.States;
 
 namespace Textile
 {
@@ -98,6 +99,6 @@ namespace Textile
         /// Gets the formatting state we should fallback to if we don't find anything
         /// relevant in a line of text.
         /// </summary>
-        public virtual Type FallbackFormattingState => typeof(States.ParagraphFormatterState);
+        public virtual Type FallbackFormattingState => typeof(ParagraphFormatterState);
     }
 }

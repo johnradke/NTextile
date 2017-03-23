@@ -11,6 +11,9 @@ namespace Textile
         private Type _defaultFormatterStateType;
         private List<Type> _formatterStates = new List<Type>();
         private List<FormatterStateAttribute> _formatterStateAttributes = new List<FormatterStateAttribute>();
+        private List<BlockModifier> _blockModifiers = new List<BlockModifier>();
+        private Stack<FormatterState> _states = new Stack<FormatterState>();
+        private readonly FormatterStateManager _stateManager;
 
         public IOutputter Output { get; }
         public int HeaderOffset { get; set; }
@@ -21,192 +24,23 @@ namespace Textile
         {
             Output = output;
             _defaultFormatterStateType = defaultFormatterStateType;
+            _stateManager = new FormatterStateManager(this);
 		}
 
-		public void RegisterProcessorModifier<T>() where T:ProcessorModifier, new()
-		{
+        public void RegisterBlockModifier<T>() where T:BlockModifier, new()
+        {
             var modifier = new T();
             modifier.Formatter = this;
-            _processorModifiers.Add(modifier);
-		}
-
-		public T GetProcessorModifier<T>() where T : ProcessorModifier
-		{
-			return _processorModifiers.OfType<T>().FirstOrDefault();
-		}
-
-		public bool UnregisterProcessorModifier(ProcessorModifier processorModifier)
-		{
-			if (_processorModifiers.Remove(processorModifier))
-			{
-				processorModifier.Formatter = null;
-				return true;
-			}
-			return false;
-		}
-
-        #region Block Modifiers Management
-
-        private List<BlockModifier> m_blockModifiers = new List<BlockModifier>();
-
-        public void RegisterBlockModifier(BlockModifier blockModifer)
-        {
-            if (blockModifer == null)
-                throw new ArgumentNullException("blockModifier");
-            m_blockModifiers.Add(blockModifer);
-			blockModifer.Formatter = this;
+            _blockModifiers.Add(modifier);
         }
-
-        public void RegisterBlockModifier(Type blockModifierType)
+        
+        public void RegisterFormatterState<T>() where T : FormatterState, new()
         {
-            if (blockModifierType == null)
-                throw new ArgumentNullException("blockModifierType");
-            if (!blockModifierType.IsSubclassOf(typeof(BlockModifier)))
-                throw new ArgumentException("The given type does not inherit BlockModifier.");
-            if (blockModifierType.GetConstructor(new Type[] { }) == null)
-                throw new ArgumentException("The block modifier must have a parameter-less constructor.");
-            RegisterBlockModifier((BlockModifier)Activator.CreateInstance(blockModifierType));
+            var attr = typeof(T).GetCustomAttributes(false).Cast<FormatterStateAttribute>().Single();
+
+            _formatterStates.Add(typeof(T));
+            _formatterStateAttributes.Add(attr);
         }
-
-        public bool UnregisterBlockModifier(BlockModifier blockModifier)
-        {
-			if (m_blockModifiers.Remove(blockModifier))
-			{
-				blockModifier.Formatter = null;
-				return true;
-			}
-			return false;
-        }
-
-        public bool UnregisterBlockModifier(Type type)
-        {
-            BlockModifier blockModifier = GetBlockModifier(type);
-            if (blockModifier != null)
-                return UnregisterBlockModifier(blockModifier);
-            return false;
-        }
-
-        public bool IsBlockModifierRegistered(BlockModifier blockModifier)
-        {
-            return m_blockModifiers.Contains(blockModifier);
-        }
-
-        public bool IsBlockModifierRegistered(Type type)
-        {
-            return GetBlockModifier(type) != null;
-        }
-
-        public bool IsBlockModifierEnabled(Type type)
-        {
-            BlockModifier blockModifier = GetBlockModifier(type);
-            if (blockModifier == null)
-                return false;
-            return blockModifier.IsEnabled;
-        }
-
-        public void SwitchBlockModifier(Type type, bool onOff)
-        {
-            BlockModifier blockModifier = GetBlockModifier(type);
-             if (blockModifier == null)
-                 throw new InvalidOperationException(string.Format("No block modifier of type '{0}' was registered.", type));
-             blockModifier.IsEnabled = onOff;
-        }
-
-        public BlockModifier GetBlockModifier(Type type)
-        {
-            return m_blockModifiers.FirstOrDefault(bm => bm.GetType() == type);
-        }
-
-        #endregion
-
-        #region State Formatters Management
-
-
-        public void RegisterFormatterState(Type formatterStateType)
-        {
-            if (formatterStateType == null)
-                throw new ArgumentNullException("formatterStateType");
-            if (!formatterStateType.IsSubclassOf(typeof(FormatterState)))
-                throw new ArgumentException("The given type does not inherit FormatterStateBase.");
-			if (formatterStateType.GetConstructor(new Type[] { }) == null)
-                throw new ArgumentException("The formatter state must have a parameter-less constructor.");
-
-            FormatterStateAttribute[] atts = (FormatterStateAttribute[])Attribute.GetCustomAttributes(formatterStateType, typeof(FormatterStateAttribute), false);
-            if (atts.Length == 0)
-                throw new ArgumentException("The formatter state must have the FormatterStateAttribute.");
-            
-            _formatterStates.Add(formatterStateType);
-            _formatterStateAttributes.Add(atts[0]);
-        }
-
-        public bool UnregisterFormatterState(Type formatterStateType)
-        {
-            return _formatterStates.Remove(formatterStateType);
-        }
-
-        public bool IsFormatterStateRegistered(Type formatterStateType)
-        {
-            return _formatterStates.Contains(formatterStateType);
-        }
-
-        private Stack<FormatterState> m_stackOfStates = new Stack<FormatterState>();
-
-        /// <summary>
-        /// Pushes a new state on the stack.
-        /// </summary>
-        /// <param name="s">The state to push.</param>
-        /// The state will be entered automatically.
-        private void PushState(FormatterState state)
-        {
-			state.Formatter = this;
-			m_stackOfStates.Push(state);
-			state.Enter();
-        }
-
-        /// <summary>
-        /// Removes the last state from the stack.
-        /// </summary>
-        /// The state will be exited automatically.
-        private void PopState()
-        {
-			var state = m_stackOfStates.Pop();
-			state.Exit();
-			state.Formatter = null;
-        }
-
-        /// <summary>
-        /// The current state, if any.
-        /// </summary>
-		public FormatterState CurrentState
-        {
-            get
-            {
-                if (m_stackOfStates.Count > 0)
-                    return m_stackOfStates.Peek();
-                else
-                    return null;
-            }
-        }
-
-		public void ChangeState(Type formatterStateType)
-        {
-            FormatterState formatterState = (FormatterState)Activator.CreateInstance(formatterStateType);
-            ChangeState(formatterState);
-        }
-
-        public void ChangeState(FormatterState formatterState)
-        {
-            if (CurrentState != null && CurrentState.GetType() == formatterState.GetType())
-            {
-                if (!CurrentState.ShouldNestState(formatterState))
-                    return;
-            }
-            PushState(formatterState);
-        }
-
-        #endregion
-
-        #region Formatting Methods
 
         /// <summary>
         /// Formats the given text.
@@ -216,9 +50,7 @@ namespace Textile
         {
             Output.Begin();
 
-            // Clean the text...
             string str = PrepareInputForFormatting(input);
-			// ...run pre-processing on it...
 			foreach (ProcessorModifier modifier in _processorModifiers)
 			{
                 if (modifier.IsEnabled)
@@ -226,7 +58,7 @@ namespace Textile
                     str = modifier.PreProcess(str);
                 }
 			}
-            // ...and format each line.
+
             string[] lines = str.Split('\n');
             for (int i = 0; i < lines.Length; ++i)
             {
@@ -235,14 +67,15 @@ namespace Textile
                 if (i < lines.Length - 1)
                     tmpLookAhead = lines[i + 1];
 
-                // Let's see if the current state(s) is(are) finished...
-                while (CurrentState != null && CurrentState.ShouldExit(tmp, tmpLookAhead))
-                    PopState();
+                while (_stateManager.ShouldExit(tmp, tmpLookAhead))
+                {
+                    _stateManager.PopState();
+                }
 
 				if (!TextileGlobals.EmptyLineRegex.IsMatch(tmp))
                 {
                     // Figure out the new state for this text line, if possible.
-                    if (CurrentState == null || CurrentState.ShouldParseForNewFormatterState(tmp))
+                    if (_stateManager.CurrentState?.ShouldParseForNewFormatterState(tmp) ?? true)
                     {
                         tmp = HandleFormattingState(tmp, tmpLookAhead);
                     }
@@ -250,28 +83,23 @@ namespace Textile
                     // a new one. We'll leave him be.
 
                     // Modify the line with our block modifiers.
-                    if (CurrentState == null || CurrentState.ShouldFormatBlocks(tmp))
+                    if (_stateManager?.CurrentState.ShouldFormatBlocks(tmp) ?? true)
                     {
                         tmp = ApplyBlockModifiers(tmp);
                     }
 
 					// Post-process the line.
-                    if (CurrentState == null || CurrentState.ShouldPostProcess(tmp))
+                    if (_stateManager?.CurrentState.ShouldPostProcess(tmp) ?? true)
                     {
                         tmp = ApplyPostProcessors(tmp);
                     }
 
                     // Format the current line.
-                    CurrentState.FormatLine(tmp);
+                    _stateManager.CurrentState.FormatLine(tmp);
                 }
             }
-            // We're done. There might be a few states still on
-            // the stack (for example if the text ends with a nested
-            // list), so we must pop them all so that they have
-            // their "Exit" method called correctly.
-            while (m_stackOfStates.Count > 0)
-                PopState();
 
+            _stateManager.PopAll();
             Output.End();
         }
 
@@ -282,7 +110,7 @@ namespace Textile
         /// <returns></returns>
         public string ApplyBlockModifiers(string str)
         {
-            foreach (BlockModifier blockModifier in m_blockModifiers)
+            foreach (BlockModifier blockModifier in _blockModifiers)
             {
                 if (blockModifier.IsEnabled)
                 {
@@ -290,9 +118,9 @@ namespace Textile
                 }
             }
 
-            for (int j = m_blockModifiers.Count - 1; j >= 0; j--)
+            for (int j = _blockModifiers.Count - 1; j >= 0; j--)
             {
-                BlockModifier blockModifier = m_blockModifiers[j];
+                BlockModifier blockModifier = _blockModifiers[j];
                 if (blockModifier.IsEnabled)
                 {
                     str = blockModifier.Conclude(str);
@@ -318,10 +146,6 @@ namespace Textile
             return str;
         }
 
-        #endregion
-
-        #region Preparation Methods
-
         /// <summary>
         /// Cleans up a text before formatting.
         /// </summary>
@@ -345,10 +169,6 @@ namespace Textile
             text = Regex.Replace(text, "\"$", "\" ");
             return text;
         }
-
-        #endregion
-
-        #region State Handling
 
         /// <summary>
         /// Gets whether the current line has a candidate formatter state, i.e. a formatter
@@ -452,7 +272,5 @@ namespace Textile
             }
             return input;
         }
-
-        #endregion
     }
 }

@@ -39,98 +39,38 @@ namespace Textile
         public TextileFormatter(IOutputter output)
             : base(output, typeof(States.ParagraphFormatterState))
         {
-            RegisterFormatterState(typeof(HeaderFormatterState));
-            RegisterFormatterState(typeof(BlockQuoteFormatterState));
-            RegisterFormatterState(typeof(ParagraphFormatterState));
-            RegisterFormatterState(typeof(FootNoteFormatterState));
-            RegisterFormatterState(typeof(OrderedListFormatterState));
-            RegisterFormatterState(typeof(UnorderedListFormatterState));
-            RegisterFormatterState(typeof(TableFormatterState));
-            RegisterFormatterState(typeof(TableRowFormatterState));
-            RegisterFormatterState(typeof(CodeFormatterState));
-            RegisterFormatterState(typeof(PreFormatterState));
-            RegisterFormatterState(typeof(PreCodeFormatterState));
-            RegisterFormatterState(typeof(PreBlockFormatterState));
-            RegisterFormatterState(typeof(NoTextileFormatterState));
+            RegisterFormatterState<HeaderFormatterState>();
+            RegisterFormatterState<BlockQuoteFormatterState>();
+            RegisterFormatterState<ParagraphFormatterState>();
+            RegisterFormatterState<FootNoteFormatterState>();
+            RegisterFormatterState<OrderedListFormatterState>();
+            RegisterFormatterState<UnorderedListFormatterState>();
+            RegisterFormatterState<TableFormatterState>();
+            RegisterFormatterState<TableRowFormatterState>();
+            RegisterFormatterState<CodeFormatterState>();
+            RegisterFormatterState<PreFormatterState>();
+            RegisterFormatterState<PreCodeFormatterState>();
+            RegisterFormatterState<PreBlockFormatterState>();
+            RegisterFormatterState<NoTextileFormatterState>();
 
-            RegisterBlockModifier(new NoTextileBlockModifier());
-            RegisterBlockModifier(new CodeBlockModifier());
-            RegisterBlockModifier(new PreBlockModifier());
-            RegisterBlockModifier(new HyperLinkBlockModifier());
-            RegisterBlockModifier(new ImageBlockModifier());
-            RegisterBlockModifier(new GlyphBlockModifier());
-            RegisterBlockModifier(new EmphasisPhraseBlockModifier());
-            RegisterBlockModifier(new StrongPhraseBlockModifier());
-            RegisterBlockModifier(new ItalicPhraseBlockModifier());
-            RegisterBlockModifier(new BoldPhraseBlockModifier());
-            RegisterBlockModifier(new CitePhraseBlockModifier());
-            RegisterBlockModifier(new DeletedPhraseBlockModifier());
-            RegisterBlockModifier(new InsertedPhraseBlockModifier());
-            RegisterBlockModifier(new SuperScriptPhraseBlockModifier());
-            RegisterBlockModifier(new SubScriptPhraseBlockModifier());
-            RegisterBlockModifier(new SpanPhraseBlockModifier());
-            RegisterBlockModifier(new FootNoteReferenceBlockModifier());
-            //TODO: capitals block modifier
+            RegisterBlockModifier<NoTextileBlockModifier>();
+            RegisterBlockModifier<CodeBlockModifier>();
+            RegisterBlockModifier<PreBlockModifier>();
+            RegisterBlockModifier<HyperLinkBlockModifier>();
+            RegisterBlockModifier<ImageBlockModifier>();
+            RegisterBlockModifier<GlyphBlockModifier>();
+            RegisterBlockModifier<EmphasisPhraseBlockModifier>();
+            RegisterBlockModifier<StrongPhraseBlockModifier>();
+            RegisterBlockModifier<ItalicPhraseBlockModifier>();
+            RegisterBlockModifier<BoldPhraseBlockModifier>();
+            RegisterBlockModifier<CitePhraseBlockModifier>();
+            RegisterBlockModifier<DeletedPhraseBlockModifier>();
+            RegisterBlockModifier<InsertedPhraseBlockModifier>();
+            RegisterBlockModifier<SuperScriptPhraseBlockModifier>();
+            RegisterBlockModifier<SubScriptPhraseBlockModifier>();
+            RegisterBlockModifier<SpanPhraseBlockModifier>();
+            RegisterBlockModifier<FootNoteReferenceBlockModifier>();
         }
-
-        #region Properties for Output
-
-        public bool FormatImages
-        {
-            get { return IsBlockModifierEnabled(typeof(ImageBlockModifier)); }
-            set { SwitchBlockModifier(typeof(ImageBlockModifier), value); }
-        }
-
-        public bool FormatLinks
-        {
-            get { return IsBlockModifierEnabled(typeof(HyperLinkBlockModifier)); }
-            set { SwitchBlockModifier(typeof(HyperLinkBlockModifier), value); }
-        }
-
-        public bool FormatLists
-        {
-            get { return IsBlockModifierEnabled(typeof(OrderedListFormatterState)); }
-            set
-            {
-                SwitchBlockModifier(typeof(OrderedListFormatterState), value);
-                SwitchBlockModifier(typeof(UnorderedListFormatterState), value);
-            }
-        }
-
-        public bool FormatFootNotes
-        {
-            get { return IsBlockModifierEnabled(typeof(FootNoteReferenceBlockModifier)); }
-            set
-            {
-                SwitchBlockModifier(typeof(FootNoteReferenceBlockModifier), value);
-                if (value)
-                    RegisterFormatterState(typeof(FootNoteFormatterState));
-                else
-                    UnregisterFormatterState(typeof(FootNoteFormatterState));
-            }
-        }
-
-        public bool FormatTables
-        {
-            get { return IsFormatterStateRegistered(typeof(TableFormatterState)); }
-            set
-            {
-                if (value)
-                {
-                    RegisterFormatterState(typeof(TableFormatterState));
-                    RegisterFormatterState(typeof(TableRowFormatterState));
-                }
-                else
-                {
-                    UnregisterFormatterState(typeof(TableFormatterState));
-                    UnregisterFormatterState(typeof(TableRowFormatterState));
-                }
-            }
-        }
-
-        #endregion
-
-        #region Utility Methods
 
         /// <summary>
         /// Utility method for quickly formatting a text without having
@@ -156,7 +96,5 @@ namespace Textile
             TextileFormatter f = new TextileFormatter(outputter);
             f.Format(input);
         }
-
-        #endregion
     }
 }

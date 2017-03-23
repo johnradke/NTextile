@@ -91,6 +91,7 @@
     <Compile Include="FormatterState.cs" />
     <Compile Include="FormatterStateAttribute.cs" />
     <Compile Include="FormatterStateConsumeContext.cs" />
+    <Compile Include="FormatterStateManager.cs" />
     <Compile Include="GenericFormatter.cs" />
     <Compile Include="ProcessorModifier.cs" />
     <Compile Include="States\BlockQuoteFormatterState.cs" />
