@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Textile
+﻿namespace Textile
 {
     /// <summary>
     /// A class that implement a text modifier that can be applied
@@ -11,11 +6,6 @@ namespace Textile
     /// </summary>
 	public abstract class ProcessorModifier
 	{
-		/// <summary>
-		/// Gets or sets the name of the modifier.
-		/// </summary>
-		public string Name { get; private set; }
-
         /// <summary>
         /// Gets or sets whether the modifier is enabled.
         /// </summary>
@@ -37,14 +27,6 @@ namespace Textile
 		protected ProcessorModifier()
         {
         }
-
-		/// <summary>
-        /// Constructs a new instance of <see cref="ProcessorModifier"/>.
-		/// </summary>
-		protected ProcessorModifier(string name)
-		{
-			Name = name;
-		}
 
         /// <summary>
         /// Pre-processing the entire input text.
