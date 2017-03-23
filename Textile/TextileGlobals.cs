@@ -10,13 +10,23 @@
 // You must not remove this notice, or any other, from this software.
 #endregion
 
+#region Using Statements
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
+#endregion
+
 
 namespace Textile
 {
-    public static class TextileGlobals
+    /// <summary>
+    /// A utility class for global things used by the TextileFormatter.
+    /// </summary>
+    class TextileGlobals
     {
+        #region Regex Patterns
+
         public const string HorizontalAlignPattern = @"(?:[()]*(\<(?!>)|(?<!<)\>|\<\>|=)[()]*)";
         public const string VerticalAlignPattern = @"[\-^~]";
 		public const string CssClassPattern = @"(?:\([^)]+\))";
@@ -24,9 +34,6 @@ namespace Textile
 		public const string CssStylePattern = @"(?:\{[^}]+\})";
 		public const string ColumnSpanPattern = @"(?:\\\d+)";
 		public const string RowSpanPattern = @"(?:/\d+)";
-        public const string PunctuationPattern = @"[\!""#\$%&'()\*\+,\-\./:;<=>\?@\[\\\]\^_`{}~]";
-        public const string HtmlAttributesPattern = @"(\s+\w+=((""[^""]+"")|('[^']+')))*";
-        public const string EmptyLine = @"^\s*$";
 
         public const string AlignPattern = "(?<align>" + HorizontalAlignPattern + "?" + VerticalAlignPattern + "?|" + VerticalAlignPattern + "?" + HorizontalAlignPattern + "?)";
         public const string SpanPattern = @"(?<span>" + ColumnSpanPattern + "?" + RowSpanPattern + "?|" + RowSpanPattern + "?" + ColumnSpanPattern + "?)";
@@ -34,35 +41,71 @@ namespace Textile
                                                         CssStylePattern + "?" + LanguagePattern + "?" + CssClassPattern + "?|" +
                                                         LanguagePattern + "?" + CssStylePattern + "?" + CssClassPattern + "?)";
 
-        public static readonly Dictionary<string, string> ImageAlign = new Dictionary<string, string>
+		public const string PunctuationPattern = @"[\!""#\$%&'()\*\+,\-\./:;<=>\?@\[\\\]\^_`{}~]";
+
+        public const string HtmlAttributesPattern = @"(\s+\w+=((""[^""]+"")|('[^']+')))*";
+
+        #endregion
+
+        #region Alignment Patterns & HTML
+
+        private static Dictionary<string, string> m_imageAlign;
+        /// <summary>
+        /// Image alignment tags, mapped to their HTML meanings.
+        /// </summary>
+        public static Dictionary<string, string> ImageAlign
         {
-            ["<"] = "left",
-            ["="] = "center",
-            [">"] = "right"
-        };
+            get { return TextileGlobals.m_imageAlign; }
+            set { TextileGlobals.m_imageAlign = value; }
+        }
 
-        public static readonly Dictionary<string, string> HorizontalAlign = new Dictionary<string, string>
+        private static Dictionary<string, string> m_horizontalAlign;
+        /// <summary>
+        /// Horizontal text alignment tags, mapped to their HTML meanings.
+        /// </summary>
+        public static Dictionary<string, string> HorizontalAlign
         {
-            ["<"] = "left",
-            ["="] = "center",
-            [">"] = "right",
-            ["<>"] = "justify"
-        };
+            get { return TextileGlobals.m_horizontalAlign; }
+            set { TextileGlobals.m_horizontalAlign = value; }
+        }
 
-        public static readonly Dictionary<string, string> VerticalAlign = new Dictionary<string, string>
+        private static Dictionary<string, string> m_verticalAlign;
+        /// <summary>
+        /// Vertical text alignment tags, mapped to their HTML meanings.
+        /// </summary>
+        public static Dictionary<string, string> VerticalAlign
         {
-            ["^"] = "top",
-            ["-"] = "middle",
-            ["~"] = "bottom"
-        };
+            get { return TextileGlobals.m_verticalAlign; }
+            set { TextileGlobals.m_verticalAlign = value; }
+        } 
 
+        #endregion
 
-        public const RegexOptions BlockModifierRegexOptions = RegexOptions.CultureInvariant;
+        public static RegexOptions BlockModifierRegexOptions = RegexOptions.CultureInvariant;
+
+        static TextileGlobals()
+        {
+            m_imageAlign = new Dictionary<string, string>();
+            m_imageAlign["<"] = "left";
+            m_imageAlign["="] = "center";
+            m_imageAlign[">"] = "right";
+
+            m_horizontalAlign = new Dictionary<string, string>();
+            m_horizontalAlign["<"] = "left";
+            m_horizontalAlign["="] = "center";
+            m_horizontalAlign[">"] = "right";
+            m_horizontalAlign["<>"] = "justify";
+
+            m_verticalAlign = new Dictionary<string, string>();
+            m_verticalAlign["^"] = "top";
+            m_verticalAlign["-"] = "middle";
+            m_verticalAlign["~"] = "bottom";
+        }
 
         public static string EncodeHTMLLink(string url)
         {
             url = url.Replace("&amp;", "&#38;");
-            url = Regex.Replace(url, "&(?=[^#])", "&#38;");
+            url = System.Text.RegularExpressions.Regex.Replace(url, "&(?=[^#])", "&#38;");
             return url;
         }
     }

@@ -1,49 +1,117 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Textile
 {
     public abstract class GenericFormatter
     {
-        private List<ProcessorModifier> _processorModifiers = new List<ProcessorModifier>();
-        private Type _defaultFormatterStateType;
-        private List<Type> _formatterStates = new List<Type>();
-        private List<FormatterStateAttribute> _formatterStateAttributes = new List<FormatterStateAttribute>();
+		public static readonly Regex EmptyLineRegex = new Regex(@"^\s*$", RegexOptions.CultureInvariant);
 
-        public IOutputter Output { get; }
-        public int HeaderOffset { get; set; }
-        public string Rel { get; set; }
-        public bool UseRestrictedMode { get; set; }
-
+        /// <summary>
+        /// Public constructor, where the formatter is hooked up
+        /// to an outputter.
+        /// </summary>
+        /// <param name="output">The outputter to be used.</param>
         protected GenericFormatter(IOutputter output, Type defaultFormatterStateType)
         {
-            Output = output;
-            _defaultFormatterStateType = defaultFormatterStateType;
+            m_output = output;
+            m_defaultFormatterStateType = defaultFormatterStateType;
 		}
 
-		public void RegisterProcessorModifier<T>() where T:ProcessorModifier, new()
+		#region Properties for Output
+
+		private IOutputter m_output = null;
+        /// <summary>
+        /// The ouputter to which the formatted text
+        /// is sent to.
+        /// </summary>
+        public IOutputter Output
+        {
+            get { return m_output; }
+		}
+
+		private int m_headerOffset = 0;
+		/// <summary>
+		/// The offset for the header tags.
+		/// </summary>
+		/// When the formatted text is inserted into another page
+		/// there might be a need to offset all headers (h1 becomes
+		/// h4, for instance). The header offset allows this.
+		public int HeaderOffset
 		{
-            var modifier = new T();
-            modifier.Formatter = this;
-            _processorModifiers.Add(modifier);
+			get { return m_headerOffset; }
+			set { m_headerOffset = value; }
+		}
+
+        string m_rel = string.Empty;
+		/// <summary>
+		/// Attribute to add to all links.
+		/// </summary>
+        public string Rel
+        {
+            get { return m_rel; }
+            set { m_rel = value; }
+        }
+
+        private bool mUseRestrictedMode = false;
+        /// <summary>
+        /// Gets or sets the 'restricted' mode where formatting features are limited.
+        /// </summary>
+        public bool UseRestrictedMode
+        {
+            get { return mUseRestrictedMode; }
+            set { mUseRestrictedMode = true; }
+        }
+
+        #endregion
+
+		#region Processor Modifiers Management
+
+		private List<ProcessorModifier> m_processorModifiers = new List<ProcessorModifier>();
+
+		public void RegisterProcessorModifier(ProcessorModifier processorModifier)
+		{
+			if (processorModifier == null)
+				throw new ArgumentNullException("preProcessorModifier");
+			m_processorModifiers.Add(processorModifier);
+			processorModifier.Formatter = this;
+		}
+
+		public void RegisterProcessorModifier(Type processorModifierType)
+		{
+			if (processorModifierType == null)
+				throw new ArgumentNullException("preProcessorModifierType");
+			if (!processorModifierType.IsSubclassOf(typeof(ProcessorModifier)))
+				throw new ArgumentException("The given type does not inherit PreProcessorModifier.");
+			if (processorModifierType.GetConstructor(new Type[] { }) == null)
+				throw new ArgumentException("The pre-processor modifier must have a parameter-less constructor.");
+			RegisterProcessorModifier((ProcessorModifier)Activator.CreateInstance(processorModifierType));
+		}
+
+		public ProcessorModifier GetProcessorModifier(string name)
+		{
+			return m_processorModifiers.FirstOrDefault(m => m.Name == name);
 		}
 
 		public T GetProcessorModifier<T>() where T : ProcessorModifier
 		{
-			return _processorModifiers.OfType<T>().FirstOrDefault();
+			return m_processorModifiers.OfType<T>().FirstOrDefault();
 		}
 
 		public bool UnregisterProcessorModifier(ProcessorModifier processorModifier)
 		{
-			if (_processorModifiers.Remove(processorModifier))
+			if (m_processorModifiers.Remove(processorModifier))
 			{
 				processorModifier.Formatter = null;
 				return true;
 			}
 			return false;
 		}
+
+		#endregion
 
         #region Block Modifiers Management
 
@@ -121,6 +189,9 @@ namespace Textile
 
         #region State Formatters Management
 
+        private Type m_defaultFormatterStateType;
+        private List<Type> m_formatterStates = new List<Type>();
+        private List<FormatterStateAttribute> m_formatterStateAttributes = new List<FormatterStateAttribute>();
 
         public void RegisterFormatterState(Type formatterStateType)
         {
@@ -135,18 +206,18 @@ namespace Textile
             if (atts.Length == 0)
                 throw new ArgumentException("The formatter state must have the FormatterStateAttribute.");
             
-            _formatterStates.Add(formatterStateType);
-            _formatterStateAttributes.Add(atts[0]);
+            m_formatterStates.Add(formatterStateType);
+            m_formatterStateAttributes.Add(atts[0]);
         }
 
         public bool UnregisterFormatterState(Type formatterStateType)
         {
-            return _formatterStates.Remove(formatterStateType);
+            return m_formatterStates.Remove(formatterStateType);
         }
 
         public bool IsFormatterStateRegistered(Type formatterStateType)
         {
-            return _formatterStates.Contains(formatterStateType);
+            return m_formatterStates.Contains(formatterStateType);
         }
 
         private Stack<FormatterState> m_stackOfStates = new Stack<FormatterState>();
@@ -214,12 +285,21 @@ namespace Textile
         /// <param name="input">The text to format.</param>
         public void Format(string input)
         {
-            Output.Begin();
+            m_output.Begin();
+
+			// Initialize stuff.
+			foreach (BlockModifier blockModifier in m_blockModifiers)
+			{
+                if (blockModifier.IsEnabled)
+                {
+                    blockModifier.Initialize();
+                }
+			}
 
             // Clean the text...
             string str = PrepareInputForFormatting(input);
 			// ...run pre-processing on it...
-			foreach (ProcessorModifier modifier in _processorModifiers)
+			foreach (ProcessorModifier modifier in m_processorModifiers)
 			{
                 if (modifier.IsEnabled)
                 {
@@ -239,7 +319,7 @@ namespace Textile
                 while (CurrentState != null && CurrentState.ShouldExit(tmp, tmpLookAhead))
                     PopState();
 
-				if (!Regex.IsMatch(TextileGlobals.EmptyLine, tmp))
+				if (!EmptyLineRegex.IsMatch(tmp))
                 {
                     // Figure out the new state for this text line, if possible.
                     if (CurrentState == null || CurrentState.ShouldParseForNewFormatterState(tmp))
@@ -272,7 +352,7 @@ namespace Textile
             while (m_stackOfStates.Count > 0)
                 PopState();
 
-            Output.End();
+            m_output.End();
         }
 
         /// <summary>
@@ -308,7 +388,7 @@ namespace Textile
         /// <returns></returns>
         public string ApplyPostProcessors(string str)
         {
-            foreach (ProcessorModifier modifier in _processorModifiers)
+            foreach (ProcessorModifier modifier in m_processorModifiers)
             {
                 if (modifier.IsEnabled)
                 {
@@ -373,10 +453,10 @@ namespace Textile
         /// <returns></returns>
         public Type GetCandidateFormatterStateType(string input, string inputLookAhead, out Match match, out Match lookAheadMatch)
         {
-            for (int i = 0; i < _formatterStates.Count; i++)
+            for (int i = 0; i < m_formatterStates.Count; i++)
             {
-                Type type = _formatterStates[i];
-                FormatterStateAttribute attribute = _formatterStateAttributes[i];
+                Type type = m_formatterStates[i];
+                FormatterStateAttribute attribute = m_formatterStateAttributes[i];
 
                 // Match the current line.
                 Match m = null;
@@ -448,7 +528,7 @@ namespace Textile
             }
             else
             {
-                ChangeState(_defaultFormatterStateType);
+                ChangeState(m_defaultFormatterStateType);
             }
             return input;
         }

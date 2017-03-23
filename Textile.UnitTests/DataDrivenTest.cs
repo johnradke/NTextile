@@ -21,7 +21,7 @@ namespace Textile.UnitTests
             ReadingMultilineOut,
         }
 
-        public static string[] TestData()
+        public static string[] HelloHelloHello()
         {
             return _assembly.GetManifestResourceNames().Where(n => n.EndsWith(".yml")).ToArray();
         }
@@ -33,7 +33,7 @@ namespace Textile.UnitTests
 
         private const string TestDataPreamblePattern = @"^[\-]{3,}\s*(#.*)?$";
 
-		[TestCaseSource(nameof(TestData))]
+		[TestCaseSource("HelloHelloHello")]
         public void TestDataFile(string resourceName)
         {
             var reader = GetReader(resourceName);
