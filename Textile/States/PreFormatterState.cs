@@ -13,11 +13,11 @@ namespace Textile.States
         {
             if (!Regex.IsMatch(context.Input, "</pre>"))
             {
-                Formatter.ChangeState(this);
+                ChangeState(this);
             }
             else
             {
-                Formatter.ChangeState(new PassthroughFormatterState());
+                ChangeState(new PassthroughFormatterState());
             }
 
             return context.Input;

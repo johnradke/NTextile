@@ -5,7 +5,7 @@ namespace Textile.States
     {
 		public override string Consume(FormatterStateConsumeContext context)
         {
-            Formatter.ChangeState(this);
+            ChangeState(this);
             return context.Input;
         }
 

@@ -17,7 +17,7 @@ namespace Textile.States
 				ChangeState(new TableFormatterState());
             }
 
-            Formatter.ChangeState(this);
+            ChangeState(this);
 
             return input;
         }

@@ -40,9 +40,9 @@ namespace Textile
 
         protected void WriteLine(string line = null) => Formatter.Output.WriteLine(line);
 
-        protected void ChangeState(FormatterState newState) => Formatter.ChangeState(newState);
+        protected void ChangeState(FormatterState newState) => Formatter.StateManager.ChangeState(newState);
 
-        protected FormatterState CurrentState => Formatter.CurrentState;
+        protected FormatterState CurrentState => Formatter.StateManager.CurrentState;
 
         /// <summary>
         /// Gets or sets whether the formatter is enabled.

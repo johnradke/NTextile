@@ -6,19 +6,18 @@ namespace Textile
 {
     public class FormatterStateManager
     {
+        private readonly Type _defaultFallbackType;
         private readonly GenericFormatter _formatter;
-        private Stack<FormatterState> _states = new Stack<FormatterState>();
+        private readonly Stack<FormatterState> _states = new Stack<FormatterState>();
 
-        public FormatterStateManager(GenericFormatter formatter)
+        public FormatterStateManager(GenericFormatter formatter, Type defaultFallbackType)
         {
             _formatter = formatter;
+            _defaultFallbackType = defaultFallbackType;
         }
 
         public void PushState(FormatterState state)
         {
-            state.Formatter = _formatter;
-            _states.Push(state);
-            state.Enter();
         }
 
         public void PopState()
@@ -35,28 +34,50 @@ namespace Textile
             ChangeState(new T());
         }
 
-        public void ChangeState(FormatterState formatterState)
+        public void ChangeState(Type t)
         {
-            if (CurrentState != null && CurrentState.GetType() == formatterState.GetType())
+            ChangeState((FormatterState)Activator.CreateInstance(t));
+        }
+
+        public void ChangeState(FormatterState state)
+        {
+            if (CurrentState != null && CurrentState.GetType() == state.GetType())
             {
-                if (!CurrentState.ShouldNestState(formatterState))
+                if (!CurrentState.ShouldNestState(state))
                 {
                     return;
                 }
             }
 
-            PushState(formatterState);
+            state.Formatter = _formatter;
+            _states.Push(state);
+            state.Enter();
         }
 
         public void PopAll()
         {
             while (_states.Any())
             {
-                _states.Pop();
+                PopState();
+            }
+        }
+
+        public void Fallback()
+        {
+            if (CurrentState != null)
+            {
+                if (CurrentState.FallbackFormattingState != null)
+                {
+                    ChangeState(CurrentState.FallbackFormattingState);
+                }
+            }
+            else
+            {
+                ChangeState(_defaultFallbackType);
             }
         }
 
         public bool ShouldExit(string input, string inputLookAhead)
-            => CurrentState?.ShouldExit(input, inputLookAhead) ?? false;
+            => CurrentState != null && CurrentState.ShouldExit(input, inputLookAhead);
     }
 }

@@ -12,8 +12,7 @@ namespace Textile
         private List<Type> _formatterStates = new List<Type>();
         private List<FormatterStateAttribute> _formatterStateAttributes = new List<FormatterStateAttribute>();
         private List<BlockModifier> _blockModifiers = new List<BlockModifier>();
-        private Stack<FormatterState> _states = new Stack<FormatterState>();
-        private readonly FormatterStateManager _stateManager;
+        public FormatterStateManager StateManager { get; }
 
         public IOutputter Output { get; }
         public int HeaderOffset { get; set; }
@@ -24,7 +23,7 @@ namespace Textile
         {
             Output = output;
             _defaultFormatterStateType = defaultFormatterStateType;
-            _stateManager = new FormatterStateManager(this);
+            StateManager = new FormatterStateManager(this, defaultFormatterStateType);
 		}
 
         public void RegisterBlockModifier<T>() where T:BlockModifier, new()
@@ -67,15 +66,16 @@ namespace Textile
                 if (i < lines.Length - 1)
                     tmpLookAhead = lines[i + 1];
 
-                while (_stateManager.ShouldExit(tmp, tmpLookAhead))
+                // Let's see if the current state(s) is(are) finished...
+                while (StateManager.ShouldExit(tmp, tmpLookAhead))
                 {
-                    _stateManager.PopState();
+                    StateManager.PopState();
                 }
 
 				if (!TextileGlobals.EmptyLineRegex.IsMatch(tmp))
                 {
                     // Figure out the new state for this text line, if possible.
-                    if (_stateManager.CurrentState?.ShouldParseForNewFormatterState(tmp) ?? true)
+                    if (StateManager.CurrentState?.ShouldParseForNewFormatterState(tmp) ?? true)
                     {
                         tmp = HandleFormattingState(tmp, tmpLookAhead);
                     }
@@ -83,23 +83,24 @@ namespace Textile
                     // a new one. We'll leave him be.
 
                     // Modify the line with our block modifiers.
-                    if (_stateManager?.CurrentState.ShouldFormatBlocks(tmp) ?? true)
+                    if (StateManager?.CurrentState.ShouldFormatBlocks(tmp) ?? true)
                     {
                         tmp = ApplyBlockModifiers(tmp);
                     }
 
 					// Post-process the line.
-                    if (_stateManager?.CurrentState.ShouldPostProcess(tmp) ?? true)
+                    if (StateManager?.CurrentState.ShouldPostProcess(tmp) ?? true)
                     {
                         tmp = ApplyPostProcessors(tmp);
                     }
 
                     // Format the current line.
-                    _stateManager.CurrentState.FormatLine(tmp);
+                    StateManager.CurrentState.FormatLine(tmp);
                 }
             }
 
-            _stateManager.PopAll();
+            StateManager.PopAll();
+
             Output.End();
         }
 
@@ -255,21 +256,8 @@ namespace Textile
                 return formatterState.Consume(context);    // This may or may not change the current state.
             }
 
-            // Default, when no block is specified, we ask the current state, or
-            // use the default state.
-            if (CurrentState != null)
-            {
-                if (CurrentState.FallbackFormattingState != null)
-                {
-                    ChangeState(CurrentState.FallbackFormattingState);
-                }
-                // else, the current state doesn't want to be superceded by
-                // a new one. We'll leave him be.
-            }
-            else
-            {
-                ChangeState(_defaultFormatterStateType);
-            }
+            StateManager.Fallback();
+
             return input;
         }
     }
