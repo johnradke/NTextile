@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Textile.Test", "Textile.UnitTests\Textile.Test.csproj", "{3A8B4C7E-1826-471F-A32A-228225804935}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Textile.Test", "Textile.Test\Textile.Test.csproj", "{3A8B4C7E-1826-471F-A32A-228225804935}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Textile", "Textile\Textile.csproj", "{AFC58756-7FB5-47F2-8E54-91828E92AE6A}"
 EndProject
