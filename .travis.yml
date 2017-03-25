@@ -1,2 +1,4 @@
 language: csharp
 solution: Textile.sln
+after_success:
+  - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./Textile.Test/bin/Release/Textile.Test.dll
