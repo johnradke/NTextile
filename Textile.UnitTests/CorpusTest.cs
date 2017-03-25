@@ -10,7 +10,7 @@ using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace UnitTestProject1
+namespace Textile.Test
 {
     public class CorpusTest
     {
