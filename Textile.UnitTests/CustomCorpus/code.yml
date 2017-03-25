@@ -1,6 +1,6 @@
 ---
 in: 'This is an empty dictionary: @{}@'
-out: '<p>This is an empty dictionary: <code>{}</code></p>'
+html: '<p>This is an empty dictionary: <code>{}</code></p>'
 ---
 in: |-
   Testing nested pre tags...
@@ -21,7 +21,7 @@ in: |-
   </code>
   </pre>
 
-out: |-
+html: |-
   <p>Testing nested pre tags&#8230;</p>
   
 
@@ -45,7 +45,7 @@ in: |-
   <pre>
   *** test
   </pre>
-out: |-
+html: |-
   <pre>
   *** test
   </pre>
@@ -54,28 +54,28 @@ in: |-
   <notextile>
   *** test
   </notextile>
-out: |-
+html: |-
   *** test
 ---
 in: '*this <span></span> is strong*'
-out: '<p><strong>this <span></span> is strong</strong></p>'
+html: '<p><strong>this <span></span> is strong</strong></p>'
 ---
 in: '*this <span>test</span> is strong*'
-out: '<p><strong>this <span>test</span> is strong</strong></p>'
+html: '<p><strong>this <span>test</span> is strong</strong></p>'
 ---
 in: <pre class="code"> __inline__</pre>
-out: <pre class="code"> __inline__</pre>
+html: <pre class="code"> __inline__</pre>
 ---
 in: |-
   * @foo@
   * @bar@
   * and @x@ is also.
-out: '<ul>\n\t<li><code>foo</code></li>\n\t\t<li><code>bar</code></li>\n\t\t<li>and <code>x</code> is also.</li>\n\t</ul>'
+html: '<ul>\n\t<li><code>foo</code></li>\n\t\t<li><code>bar</code></li>\n\t\t<li>and <code>x</code> is also.</li>\n\t</ul>'
 ---
 in: |-
   <pre class="code"> <hello> </pre>
   <pre class="code"> <hello> </pre>
-out: |-
+html: |-
   <pre class="code"> &lt;hello&gt; </pre>
   <pre class="code"> &lt;hello&gt; </pre>
 ---
@@ -93,7 +93,7 @@ in: |-
   Paragraph 2.
 
   Paragraph 3.
-out: |-
+html: |-
   <p>Test of Markdown-style indented code.</p>
   
   	<pre><code>

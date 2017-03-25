@@ -1,0 +1,17 @@
+﻿---
+in: 'notextile. <table></table>'
+html: '<table></table>'
+---
+in: |-
+  <notextile>
+  <table>
+    <tr><td>One</td><td>Two</td></tr>
+    <tr><td>Three</td><td>Four</td></tr>
+  </table>
+  </notextile>
+
+html: |-
+  <table>
+    <tr><td>One</td><td>Two</td></tr>
+    <tr><td>Three</td><td>Four</td></tr>
+  </table>

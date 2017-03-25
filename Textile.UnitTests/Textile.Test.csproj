@@ -47,10 +47,14 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.1.0\lib\net35\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockAttributesParserTest.cs" />
-    <Compile Include="DataDrivenTest.cs" />
+    <Compile Include="CorpusTest.cs" />
     <Compile Include="FootNotesReferencesFormatterTest.cs" />
     <Compile Include="GlyphsFormatterTest.cs" />
     <Compile Include="HyperLinksFormatterTest.cs" />
@@ -104,27 +108,44 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="TestData\blockquote.yml" />
-    <EmbeddedResource Include="TestData\blocks.yml" />
-    <EmbeddedResource Include="TestData\code.yml" />
-    <EmbeddedResource Include="TestData\hard_breaks.yml" />
-    <EmbeddedResource Include="TestData\html.yml" />
-    <EmbeddedResource Include="TestData\images.yml" />
-    <EmbeddedResource Include="TestData\instiki.yml" />
-    <EmbeddedResource Include="TestData\links.yml" />
-    <EmbeddedResource Include="TestData\lists.yml" />
-    <EmbeddedResource Include="TestData\notextile.yml" />
-    <EmbeddedResource Include="TestData\poignant.yml" />
-    <EmbeddedResource Include="TestData\precode.yml" />
-    <EmbeddedResource Include="TestData\table.yml" />
-    <EmbeddedResource Include="TestData\textism.yml" />
+    <EmbeddedResource Include="CustomCorpus\blockquote.yml" />
+    <EmbeddedResource Include="CustomCorpus\blocks.yml" />
+    <EmbeddedResource Include="CustomCorpus\code.yml" />
+    <EmbeddedResource Include="CustomCorpus\hard_breaks.yml" />
+    <EmbeddedResource Include="CustomCorpus\html.yml" />
+    <EmbeddedResource Include="CustomCorpus\images.yml" />
+    <EmbeddedResource Include="CustomCorpus\instiki.yml" />
+    <EmbeddedResource Include="CustomCorpus\links.yml" />
+    <EmbeddedResource Include="CustomCorpus\lists.yml" />
+    <EmbeddedResource Include="CustomCorpus\notextile.yml" />
+    <EmbeddedResource Include="CustomCorpus\poignant.yml" />
+    <EmbeddedResource Include="CustomCorpus\precode.yml" />
+    <EmbeddedResource Include="CustomCorpus\table.yml" />
+    <EmbeddedResource Include="CustomCorpus\textism.yml" />
+    <EmbeddedResource Include="RedclothCorpus\basic.yml" />
+    <EmbeddedResource Include="RedclothCorpus\code.yml" />
+    <EmbeddedResource Include="RedclothCorpus\definitions.yml" />
+    <EmbeddedResource Include="RedclothCorpus\extra_whitespace.yml" />
+    <EmbeddedResource Include="RedclothCorpus\filter_html.yml" />
+    <EmbeddedResource Include="RedclothCorpus\filter_pba.yml" />
+    <EmbeddedResource Include="RedclothCorpus\html.yml" />
+    <EmbeddedResource Include="RedclothCorpus\images.yml" />
+    <EmbeddedResource Include="RedclothCorpus\instiki.yml" />
+    <EmbeddedResource Include="RedclothCorpus\links.yml" />
+    <EmbeddedResource Include="RedclothCorpus\lists.yml" />
+    <EmbeddedResource Include="RedclothCorpus\poignant.yml" />
+    <EmbeddedResource Include="RedclothCorpus\sanitize_html.yml" />
+    <EmbeddedResource Include="RedclothCorpus\table.yml" />
+    <EmbeddedResource Include="RedclothCorpus\textism.yml" />
+    <EmbeddedResource Include="RedclothCorpus\threshold.yml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestData\Readme.txt" />
+    <Content Include="CustomCorpus\Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

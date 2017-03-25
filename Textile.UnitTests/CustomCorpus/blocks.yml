@@ -1,0 +1,50 @@
+﻿---
+in: some stuff in *bold*.
+html: <p>some stuff in <strong>bold</strong>.</p>
+---
+in: some stuff in bold (*here*).
+html: <p>some stuff in bold (<strong>here</strong>).</p>
+---
+in: some super*complex*stuff in *bold*.
+html: <p>some super*complex*stuff in <strong>bold</strong>.</p>
+---
+in: |-
+  bq. Some quote
+  Rest of the quote
+
+  Normal stuff.
+html: |-
+  <blockquote><p>Some quote<br />
+  Rest of the quote</p></blockquote>
+
+  <p>Normal stuff.</p>
+---
+in: |-
+  bq.. Some quote
+
+  Rest of the quote
+
+  p. Normal stuff.
+html: |-
+  <blockquote><p>Some quote</p>
+  <p>Rest of the quote</p></blockquote>
+
+  <p>Normal stuff.</p>
+---
+in: |-
+  pre. Pre-formatted text.
+  
+  Normal text.
+html: |-
+  <pre>Pre-formatted text.</pre>
+  <p>Normal text.</p>
+---
+in: |-
+  pre. Pre-formatted text.
+  More of this.
+  
+  Normal text.
+html: |-
+  <pre>Pre-formatted text.
+  More of this.</pre>
+  <p>Normal text.</p>

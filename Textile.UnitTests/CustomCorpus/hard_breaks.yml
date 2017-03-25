@@ -3,7 +3,7 @@ in: |-
   |This|is|a|row|
   {background:#ddd}. |This|is|grey|row|
   |This|is|another|row|
-out: |-
+html: |-
   <table>
   		<tr>
   			<td>This</td>
