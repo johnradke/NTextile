@@ -2,4 +2,4 @@ language: csharp
 solution: Textile.sln
 script:
   - xbuild /p:Configuration=Debug Textile.sln
-  - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./Textile.Test/bin/Release/Textile.Test.dll
+  - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./Textile.Test/bin/Debug/Textile.Test.dll
