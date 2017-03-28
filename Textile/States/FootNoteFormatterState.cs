@@ -23,7 +23,7 @@ namespace Textile.States
 
         public override void Enter()
         {
-            Write($"<p id=\"fn{_noteID}\"{FormattedStylesAndAlignment()}><sup>{_noteID}</sup> ");
+            Write($"<p id=\"fn{_noteID}\"{FormattedStylesAndAlignment()}><sup>{_noteID}</sup>");
         }
 
         public override void Exit()

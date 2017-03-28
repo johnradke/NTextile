@@ -4,17 +4,51 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Textile;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
+using System.Text.RegularExpressions;
+using YamlDotNet.RepresentationModel;
 
 namespace Textile.Test
 {
     public class CorpusTest
     {
         private static Assembly Assembly => typeof(CorpusTest).Assembly;
+
+        [TestCaseSource(nameof(GetTestCases))]
+        public void TestStuff(string input, string expected)
+        {
+            var outputter = new StringBuilderOutputter();
+            var formatter = new TextileFormatter(outputter);
+            formatter.Format(input);
+
+            Assert.That(CleanHtml(outputter.GetFormattedText()), Is.EqualTo(CleanHtml(expected)));
+        }
+
+        private static string CleanHtml(string input)
+        {
+            input = input.Replace('\r', ' ')
+                .Replace('\n', ' ')
+                .Replace('\t', ' ');
+
+            return Regex.Replace(input, @"\s+", " ").Trim();
+        }
+
+        [Test]
+        public void YamlTest()
+        {
+            Console.WriteLine(GetTestCases().Count());
+            
+        }
+
+        private static TestCaseData Deserialize(YamlDocument document, string filename, int index)
+        {
+            var node = document.RootNode;
+
+            var nodeName = node.Get("name");
+            filename = string.Join(".", filename.Split('.').Reverse().Take(3).Reverse());
+
+            return new TestCaseData(node.Get("in"), node.Get("html"))
+                .SetName($"{filename} : {nodeName ?? (index + 1).ToString()}");
+        }
 
         private static IEnumerable<string> GetEmbeddedYamlFilenames()
         {
@@ -26,81 +60,40 @@ namespace Textile.Test
             return new StreamReader(Assembly.GetManifestResourceStream(resourceName));
         }
 
-        private static IEnumerable<IEnumerable<CorpusTestCase>> GetCorpusTestCases()
-        {
-            var yaml = new DeserializerBuilder()
-                .WithNamingConvention(new UnderscoredNamingConvention())
-                .Build();
-
-            foreach (var filename in GetEmbeddedYamlFilenames())
-            {
-                IEnumerable<CorpusTestCase> cases = null;
-                try
-                {
-                    cases = yaml.DeserializeMultiple<CorpusTestCase>(GetYaml(filename)).ToList();
-                }
-                catch (Exception e)
-                {
-                    throw new YamlException($"Error in file {filename}", e);
-                }
-
-                yield return cases;
-            }
-        }
-
         private static IEnumerable<TestCaseData> GetTestCases()
         {
-            return GetCorpusTestCases().SelectMany(c => c).Select(c => new TestCaseData(c.In)
-                .Returns(c.Html)
-                .SetName(c.Name)
-                .SetDescription(c.Description ?? ""));
+            return GetTestCasesImpl(null);
         }
 
-        [TestCaseSource(nameof(GetTestCases))]
-        public string TestStuff(string input)
+        private static IEnumerable<TestCaseData> GetTestCasesImpl(Func<string, bool> filter)
         {
-            var outputter = new StringBuilderOutputter();
-            var formatter = new TextileFormatter(outputter);
-            formatter.Format(input);
-
-            return outputter.GetFormattedText();
-        }
-    }
-
-    public class CorpusTestCase
-    {
-        public string Name { get; set; }
-        public string Desc { set { Description = value; } get { throw new NotImplementedException(); } }
-        public string Description { get; set; }
-        public string In { get; set; }
-        public string Html { get; set; }
-        public string HtmlNoBreaks { get; set; }
-        public bool ValidHtml { get; set; }
-        public string LiteModeHtml { get; set; }
-        public string Latex { get; set; }
-        public string NoSpanCapsHtml { get; set; }
-        public string SanitizedHtml { get; set; }
-        public string FilteredHtml { get; set; }
-        public string StyleFilteredHtml { get; set; }
-        public string ClassFilteredHtml { get; set; }
-        public string IdFilteredHtml { get; set; }
-        public string Comment { get; set; }
-        public string Comments { get; set; }
-        public string Note { get; set; }
-    }
-
-    public static class YamlExtensions
-    {
-        public static IEnumerable<T> DeserializeMultiple<T>(this Deserializer deserializer, StreamReader input)
-        {
-            // adapted from https://github.com/aaubry/YamlDotNet/wiki/Samples.DeserializingMultipleDocuments
-            var parser = new Parser(input);
-            parser.Expect<StreamStart>();
-            
-            while (parser.Accept<DocumentStart>())
+            var filenames = GetEmbeddedYamlFilenames();
+            if (filter != null)
             {
-                yield return deserializer.Deserialize<T>(parser);
+                filenames = filenames.Where(filter);
             }
+
+            foreach (var filename in filenames)
+            {
+                var yaml = new YamlStream();
+                yaml.Load(GetYaml(filename));
+
+                for (var i = 0; i < yaml.Documents.Count; i++)
+                {
+                    yield return Deserialize(yaml.Documents[i], filename, i);
+                }
+            }
+        }
+    }
+
+    internal static class YamlExtensions
+    {
+        public static string Get(this YamlNode node, string key)
+        {
+            var map = ((YamlMappingNode)node).Children;
+            var nodeKey = new YamlScalarNode(key);
+
+            return !map.ContainsKey(nodeKey) ? null : map[nodeKey].ToString();
         }
     }
 }
