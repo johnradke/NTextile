@@ -3,3 +3,7 @@ solution: Textile.sln
 script:
   - xbuild /p:Configuration=Release Textile.sln
   - mono ./packages/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./Textile.Test/bin/Release/Textile.Test.dll
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
