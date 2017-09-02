@@ -40,12 +40,22 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlRenderer, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.1-beta1\lib\net45\HtmlRenderer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HtmlRenderer.WinForms, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.WinForms.1.5.1-beta1\lib\net45\HtmlRenderer.WinForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.4.1.0\lib\net35\YamlDotNet.dll</HintPath>
@@ -55,8 +65,10 @@
   <ItemGroup>
     <Compile Include="BlockAttributesParserTest.cs" />
     <Compile Include="CorpusTest.cs" />
+    <Compile Include="CorpusTestData.cs" />
     <Compile Include="FootNotesReferencesFormatterTest.cs" />
     <Compile Include="GlyphsFormatterTest.cs" />
+    <Compile Include="HtmlTestExtensions.cs" />
     <Compile Include="HyperLinksFormatterTest.cs" />
     <Compile Include="ImageFormatterTest.cs" />
     <Compile Include="PhraseModifierFormatterTest.cs" />

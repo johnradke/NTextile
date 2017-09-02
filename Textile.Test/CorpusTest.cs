@@ -1,99 +1,37 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using YamlDotNet.RepresentationModel;
 
 namespace Textile.Test
 {
     public class CorpusTest
     {
-        private static Assembly Assembly => typeof(CorpusTest).Assembly;
-
-        [TestCaseSource(nameof(GetTestCases))]
+        [TestCaseSource(typeof(CorpusTestData))]
         public void TestStuff(string input, string expected)
         {
             var outputter = new StringBuilderOutputter();
             var formatter = new TextileFormatter(outputter);
             formatter.Format(input);
+            var actual = outputter.GetFormattedText();
 
-            Assert.That(CleanHtml(outputter.GetFormattedText()), Is.EqualTo(CleanHtml(expected)));
-        }
-
-        private static string CleanHtml(string input)
-        {
-            input = input.Replace('\r', ' ')
-                .Replace('\n', ' ')
-                .Replace('\t', ' ');
-
-            return Regex.Replace(input, @"\s+", " ").Trim();
-        }
-
-        [Test]
-        public void YamlTest()
-        {
-            Console.WriteLine(GetTestCases().Count());
-            
-        }
-
-        private static TestCaseData Deserialize(YamlDocument document, string filename, int index)
-        {
-            var node = document.RootNode;
-
-            var nodeName = node.Get("name");
-            filename = string.Join(".", filename.Split('.').Reverse().Take(3).Reverse());
-
-            return new TestCaseData(node.Get("in"), node.Get("html"))
-                .SetName($"{filename} : {nodeName ?? (index + 1).ToString()}");
-        }
-
-        private static IEnumerable<string> GetEmbeddedYamlFilenames()
-        {
-            return Assembly.GetManifestResourceNames().Where(s => s.EndsWith(".yml"));
-        }
-
-        private static StreamReader GetYaml(string resourceName)
-        {
-            return new StreamReader(Assembly.GetManifestResourceStream(resourceName));
-        }
-
-        private static IEnumerable<TestCaseData> GetTestCases()
-        {
-            return GetTestCasesImpl(null);
-        }
-
-        private static IEnumerable<TestCaseData> GetTestCasesImpl(Func<string, bool> filter)
-        {
-            var filenames = GetEmbeddedYamlFilenames();
-            if (filter != null)
+            Bitmap diff;
+            if (!actual.RendersEqual(expected, out diff))
             {
-                filenames = filenames.Where(filter);
-            }
+                var path = Path.Combine(Path.GetTempPath(), "Textile.Test");
 
-            foreach (var filename in filenames)
-            {
-                var yaml = new YamlStream();
-                yaml.Load(GetYaml(filename));
-
-                for (var i = 0; i < yaml.Documents.Count; i++)
+                if (Directory.Exists(path))
                 {
-                    yield return Deserialize(yaml.Documents[i], filename, i);
+                    
                 }
+
+                Directory.CreateDirectory(path);
+                var filename = Path.Combine(path, $"{TestContext.CurrentContext.Test.Name}.png");
+
+                diff.Save(filename);
+
+                Assert.Fail($"HTML does not match.\r\nExpected:\r\n{expected}\r\n\r\nActual:\r\n{actual}\r\n\r\nDiff image: {filename}");
             }
-        }
-    }
-
-    internal static class YamlExtensions
-    {
-        public static string Get(this YamlNode node, string key)
-        {
-            var map = ((YamlMappingNode)node).Children;
-            var nodeKey = new YamlScalarNode(key);
-
-            return !map.ContainsKey(nodeKey) ? null : map[nodeKey].ToString();
         }
     }
 }
